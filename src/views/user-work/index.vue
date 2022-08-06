@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="app-container">区域管理</div>
+    <div class="app-container">工作量列表</div>
   </div>
 </template>
 
