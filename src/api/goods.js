@@ -21,6 +21,54 @@ export function getssStrategyApi(className) {
   });
 }
 /**
+ * 商品类型添加
+ * @returns promise
+ */
+ export function postStrategyApi(className) {
+  return request({
+    url: "/vm-service/skuClass",
+    method:'POST',
+    data:{
+      className
+    }
+  });
+}
+/**
+ * 商品类型不同页
+ * @returns promise
+ */
+ export function getYStrategyApi(params) {
+  return request({
+    url: "/vm-service/skuClass/search",
+    params
+  });
+}
+/**
+ * 修改商品类型
+ * @returns promise
+ */
+ export function getGStrategyApi(className,id) {
+  return request({
+    url: "/vm-service/skuClass/"+id,
+    method:'PUT',
+    data:{
+      className
+    }
+  });
+}
+/**
+ * 删除商品类型
+ * @returns promise
+ */
+ export function movedepartApi(id) {
+  return request({
+    url: '/vm-service/skuClass/'+id,
+    method:'DELETE',
+  })
+}
+
+
+/**
  * 商品列表
  * @returns promise
  */
