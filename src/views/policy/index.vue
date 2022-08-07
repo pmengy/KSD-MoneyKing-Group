@@ -3,7 +3,7 @@
     <div class="app-container">
       <!-- 搜索栏 -->
       <el-card class="box-card">
-        <Toubu />
+        <Toubu @search="Search" />
       </el-card>
       <!-- 列表栏 -->
       <el-card class="box-search" shadow="never">
@@ -36,7 +36,7 @@
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/body.vue";
 import Toubu from "./components/TOUbu.vue";
-import { getmachineApi } from "@/api/index";
+import { getmachineApi, getSmachineApi } from "@/api/index";
 
 export default {
   data() {
@@ -62,6 +62,16 @@ export default {
       console.log(res);
       this.currentList = res.data.currentPageRecords;
       // console.log(this.bodyList);
+    },
+    // 搜索
+    async Search(val) {
+      if (val) {
+        const res = await getSmachineApi(val);
+        console.log(res);
+        this.currentList = res.data.currentPageRecords;
+      } else {
+        this.getmachineApi();
+      }
     },
   },
 };

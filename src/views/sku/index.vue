@@ -3,7 +3,7 @@
     <div class="app-container">
       <!-- 搜索栏 -->
       <el-card class="box-card">
-        <Toubu />
+        <Toubu @search="Search" />
       </el-card>
       <!-- 列表栏 -->
       <el-card class="box-search" shadow="never">
@@ -63,7 +63,7 @@
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/body.vue";
 import Toubu from "./components/TOUbu.vue";
-import { getStrategyApiF, getStrategyApiFF } from "@/api/index";
+import { getStrategyApiF, getStrategyApiFF,getssStrategyApiF } from "@/api/index";
 
 export default {
   data() {
@@ -104,6 +104,7 @@ export default {
       this.totalPage = res.data.totalPage;
       this.totalCount = res.data.totalCount;
     },
+    // 下一页
     async nextPage() {
       const res = await getStrategyApiFF({
         pageIndex: parseInt(this.pageIndex) + 1,
@@ -124,11 +125,19 @@ export default {
       }
       const res = await getStrategyApiFF({
         pageIndex: parseInt(this.pageIndex) - 1,
-        taskCode: this.formInline.taskCode,
-        status: this.formInline.status,
       });
       this.pageIndex = parseInt(this.pageIndex) - 1;
       this.currentList = res.data.currentPageRecords;
+    },
+    // 搜索
+    async Search(val) {
+      if (val) {
+        const res = await getssStrategyApiF(val);
+        console.log(res);
+        this.currentList = res.data.currentPageRecords;
+      } else {
+        this.getStrategyApiF();
+      }
     },
   },
 };

@@ -8,3 +8,15 @@ export function getmachineApi() {
     url: "/vm-service/policy/search",
   });
 }
+/**
+ * 策略搜索
+ * @returns promise
+ */
+ export function getSmachineApi(policyName) {
+  return request({
+    url: "/vm-service/policy/search",
+    params:{
+      policyName
+    }
+  });
+}

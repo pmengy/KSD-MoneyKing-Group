@@ -3,7 +3,7 @@
     <div class="app-container">
       <!-- 搜索栏 -->
       <el-card class="box-card">
-        <Toubu />
+        <Toubu @search="Search" />
       </el-card>
       <!-- 列表栏 -->
       <el-card class="box-search" shadow="never">
@@ -36,16 +36,14 @@
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/body.vue";
 import Toubu from "./components/TOUbu.vue";
-import { getStrategyApi } from "@/api/index";
+import { getStrategyApi, getssStrategyApi } from "@/api/index";
 
 export default {
   data() {
     return {
       currentList: [], //列表数据
       pageIndex: "", //实现换页页码不变
-      tableLabel: [
-        { label: "商品类型名称", width: "1400", prop: "className" },
-      ],
+      tableLabel: [{ label: "商品类型名称", width: "1400", prop: "className" }],
     };
   },
   components: { DkdButton, DkdTable, Toubu },
@@ -60,6 +58,15 @@ export default {
       console.log(res);
       this.currentList = res.data.currentPageRecords;
       // console.log(this.bodyList);
+    },
+    async Search(val) {
+      if (val) {
+        const res = await getssStrategyApi(val);
+        console.log(res);
+        this.currentList = res.data.currentPageRecords;
+      } else {
+        this.getStrategyApi();
+      }
     },
   },
 };

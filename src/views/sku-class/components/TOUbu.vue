@@ -2,10 +2,16 @@
   <div>
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="商品类型搜索">
-        <el-input v-model="formInline.user" placeholder="请输入"></el-input>
+        <el-input
+          v-model="formInline.user"
+          placeholder="请输入名称关键字"
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" icon="el-icon-search"
+        <el-button
+          type="primary"
+          @click.native="$emit('search', formInline.user)"
+          icon="el-icon-search"
           >查询</el-button
         >
       </el-form-item>
@@ -19,15 +25,10 @@ export default {
     return {
       formInline: {
         user: "",
-        region: "",
       },
     };
   },
-  methods: {
-    onSubmit() {
-      console.log("submit!");
-    },
-  },
+  methods: {},
 };
 </script>
 
