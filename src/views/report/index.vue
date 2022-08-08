@@ -67,24 +67,90 @@
           </div></el-col
         >
       </el-row>
+      <el-row :gutter="24">
+        <el-col :span="22" style="margin-left: 30px"
+          ><el-card class="box-card">
+            <div style="min-height: 300px">
+              <!-- 事件表头 -->
+              <el-row :gutter="24">
+                <el-form ref="form" label-width="80px">
+                  <el-col :span="8">
+                    <el-form-item label="活动区域">
+                      <el-select placeholder="请选择活动区域">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="活动时间">
+                      <el-date-picker
+                        v-model="value1"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                      >
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </el-form>
+              </el-row>
+              <!-- 中间表单详情 -->
+              <el-row :gutter="24">
+                <el-col :span="5">笔数统计： 3225 个</el-col>
+                <el-col :span="5">收入统计： 22840.48 元</el-col>
+                <el-col :span="5">分成统计： 31.49 元</el-col>
+              </el-row>
+              <!-- 底部表栏 -->
+              <formData
+                :tableLabel="tableLabel"
+                :currentList="currentList"
+              ></formData>
+            </div> </el-card
+        ></el-col>
+      </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import { getOrderAmount, getCrderCount, getTotalBill } from "@/api/report";
+import {
+  getOrderAmount,
+  getCrderCount,
+  getTotalBill,
+  getPartnerCollect,
+} from "@/api/report";
+import formData from "./compents/DkdTable";
 import dayjs from "dayjs";
 export default {
   data() {
     return {
       dyat: 0,
+      region: "",
       daySale: "",
       monSale: "",
       dayCount: "",
       monCount: "",
       dayBill: "",
       monBill: "",
+      tableLabel: [
+        { label: "订单日期", width: "180", prop: "date" },
+        { label: "合作商", width: "170", prop: "ownerName" },
+        { label: "分成比例", width: "170", prop: "ratio" },
+        { label: "收入元", width: "170", prop: "orderTotalMoney" },
+        {
+          label: "笔数",
+          width: "170",
+          prop: "orderCount",
+        },
+        { label: "分成金额", width: "170", prop: "totalBill" },
+      ],
+      currentList: [],
     };
+  },
+  components: {
+    formData,
   },
   created() {
     this.getOrderAmount();
@@ -93,6 +159,7 @@ export default {
     this.getDayCount();
     this.getMonBill();
     this.getDayBill();
+    this.getPartnerCollect();
   },
   computed: {
     // 时间区域
@@ -116,6 +183,16 @@ export default {
     },
   },
   methods: {
+    // 获取表格数据
+    async getPartnerCollect() {
+      const res = await getPartnerCollect({
+        start: this.endatd,
+        end: this.statd,
+        pageIndex: 1,
+        pageSize: 10,
+      });
+      this.currentList = res.data.currentPageRecords;
+    },
     // 获取日收入
     async getOrderAmount() {
       const res = await getOrderAmount({

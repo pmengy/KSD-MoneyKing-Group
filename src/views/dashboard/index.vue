@@ -242,8 +242,15 @@ export default {
       } else {
         this.dyat = 360;
       }
-      this.getOrderAmount();
       this.getregionAmountCollect();
+      this.getUserWorks();
+      this.getregionCollect();
+      this.getregionOrderCount();
+      this.getNodeCount();
+      this.getPrtnerCount();
+      this.getnodeCollect();
+      this.getSkuTop();
+      this.getOrderAmount();
     },
     // 柱状图
     async getOrderAmount() {
@@ -311,7 +318,7 @@ export default {
           text: "销售额分布",
           left: "center",
         },
-
+        grid: { top: "18%", left: "20%", right: "2%", bottom: "24%" },
         xAxis: {
           type: "category",
           data: this.cylinderXAxis,

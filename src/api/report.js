@@ -20,3 +20,10 @@ export function getTotalBill(data) {
     params: data,
   });
 }
+// 获取一定时间范围之内的数据总数
+export function getPartnerCollect(data) {
+  return request({
+    url: "/order-service/report/partnerCollect",
+    params: data,
+  });
+}
