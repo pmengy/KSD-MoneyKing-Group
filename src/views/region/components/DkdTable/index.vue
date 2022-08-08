@@ -34,7 +34,7 @@
         >
           <div class="text" style="display: flex">
             <p>区域名称：</p>
-            <p>{{ scope.row.name }}</p>
+            <p>{{ form.name }}</p>
           </div>
           <div class="table" style="display: flex">
             <p>包含点位：</p>
