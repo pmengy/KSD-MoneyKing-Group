@@ -95,7 +95,6 @@
 import { searchTasks, getTaskStatus } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "@/components/DkdTable";
-
 export default {
   data() {
     return {
@@ -123,6 +122,7 @@ export default {
       ],
     };
   },
+  name: "userList",
   components: { DkdButton, DkdTable },
   created() {
     this.searchTasks();
