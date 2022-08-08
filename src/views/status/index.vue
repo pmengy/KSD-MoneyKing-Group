@@ -120,16 +120,36 @@
       <el-dialog title="设备详情" :visible.sync="dialogVisible" width="50%">
         <el-row :gutter="20">
           <el-col :span="6"
-            ><div class="grid-content bg-purple">销售量:</div></el-col
+            ><div class="grid-content bg-purple">
+              销售量:
+              <span style="color: #5f84ff"
+                >{{ detailInfo.orderCount || 0 }} 个</span
+              >
+            </div></el-col
           >
           <el-col :span="6"
-            ><div class="grid-content bg-purple">销售额:</div></el-col
+            ><div class="grid-content bg-purple">
+              销售额:
+              <span style="color: #5f84ff"
+                >{{ detailInfo.orderAmount || 0 }} 元</span
+              >
+            </div></el-col
           >
           <el-col :span="6"
-            ><div class="grid-content bg-purple">补货次数:</div></el-col
+            ><div class="grid-content bg-purple">
+              补货次数:
+              <span style="color: #5f84ff"
+                >{{ detailInfo.supplyCount || 0 }} 次</span
+              >
+            </div></el-col
           >
           <el-col :span="6"
-            ><div class="grid-content bg-purple">维修次数:</div></el-col
+            ><div class="grid-content bg-purple">
+              维修次数:
+              <span style="color: #5f84ff"
+                >{{ detailInfo.repairCount || 0 }} 次</span
+              >
+            </div></el-col
           >
         </el-row>
         <p>商品销量 (月)</p>
@@ -156,7 +176,14 @@
 
 <script>
 import DkdButton from "@/components/DkdButton";
-import { getVmList, getSalesVolume } from "@/api/status";
+import {
+  getVmList,
+  getSalesVolume,
+  getSupplyCount,
+  getRepairCount,
+} from "@/api/status";
+import { getOrderCount, getOrderAmount } from "@/api/report";
+import dayjs from "dayjs";
 export default {
   name: "VmStatus",
   components: { DkdButton },
@@ -169,6 +196,12 @@ export default {
       totalCount: "",
       dialogVisible: false,
       goodsSaleList: [],
+      detailInfo: {
+        orderCount: "",
+        orderAmount: "",
+        supplyCount: "",
+        repairCount: "",
+      },
     };
   },
 
@@ -208,7 +241,7 @@ export default {
         innerCode: this.innerCode,
       });
     },
-    // 获取下一页数据
+    // 获取上一页数据
     async lastPage() {
       await this.getVmList({
         pageIndex: parseInt(this.pageIndex) - 1,
@@ -223,26 +256,57 @@ export default {
     getVmInfo(innerCode, vmType, nodeId, createUserId) {
       this.dialogVisible = true;
       const params = { vmType, nodeId, createUserId };
-      this.getSalesVolume(innerCode, "2022-08-01", "2022-08-07", params);
-      // this.getOrderCount(
-      //   "2022-08-01",
-      //   "2022-08-01",
-      //   innerCode
-      // );
+      this.getSalesVolume(innerCode, this.start, this.end, params);
+      this.getOrderCount({
+        start: this.startTime,
+        end: this.endTime,
+        innerCode,
+      });
+      this.getOrderAmount({
+        start: this.startTime,
+        end: this.endTime,
+        innerCode,
+      });
+      this.getSupplyCount(innerCode, this.start, this.end);
+      this.getRepairCount(innerCode, this.start, this.end);
     },
     // 获取当前设备的商品销量
     async getSalesVolume(innerCode, start, end, params) {
       const res = await getSalesVolume(innerCode, start, end, params);
       this.goodsSaleList = res.data;
     },
-    // async getOrderCount(start, end, innerCode) {
-    //   const res = await getOrderCount(start, end, innerCode);
-    //   console.log(res);
-    // },
+    async getOrderCount(params) {
+      const res = await getOrderCount(params);
+      this.detailInfo.orderCount = res.data;
+    },
+    async getOrderAmount(params) {
+      const res = await getOrderAmount(params);
+      this.detailInfo.orderAmount = res.data / 100;
+    },
+    async getSupplyCount(innerCode, start, end) {
+      const res = await getSupplyCount(innerCode, start, end);
+      this.detailInfo.supplyCount = res.data;
+    },
+    async getRepairCount(innerCode, start, end) {
+      const res = await getRepairCount(innerCode, start, end);
+      this.detailInfo.repairCount = res.data;
+    },
   },
   computed: {
     currentIndex() {
       return this.pageIndex * 10;
+    },
+    end() {
+      return dayjs().format("YYYY-MM-DD");
+    },
+    endTime() {
+      return dayjs().format("YYYY-MM-DD HH:mm:ss");
+    },
+    start() {
+      return dayjs().startOf("month").format("YYYY-MM-DD");
+    },
+    startTime() {
+      return dayjs().startOf("month").format("YYYY-MM-DD HH:mm:ss");
     },
   },
 };
@@ -252,7 +316,7 @@ export default {
 .salesList {
   display: flex;
   width: 100%;
-  justify-content: start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   span {
     height: 60px;

@@ -27,7 +27,6 @@ export function getSalesVolume(
   });
 }
 
-// /order-service/report/orderCount
 /**
  * 获取一定时间范围之内的订单总数
  * @param {*} innerCode 售货机编号
@@ -47,5 +46,27 @@ export function getOrderCount(
       end,
       innerCode,
     },
+  });
+}
+
+/**
+ * 获取售货机补货次数
+ * @param {*} params start,end,innerCode
+ * @returns promise
+ */
+export function getSupplyCount(innerCode, start, end) {
+  return request({
+    url: `/task-service/task/supplyCount/${innerCode}/${start}/${end}`,
+  });
+}
+
+/**
+ * 获取售货机维修次数
+ * @param {*} params start,end,innerCode
+ * @returns promise
+ */
+export function getRepairCount(innerCode, start, end) {
+  return request({
+    url: `/task-service/task/repairCount/${innerCode}/${start}/${end}`,
   });
 }

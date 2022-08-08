@@ -40,7 +40,7 @@ service.interceptors.response.use(
       await store.dispatch("user/logout");
       router.push("/login");
     } else {
-      Message.error(error.message);
+      // Message.error(error.message);
     }
     return Promise.reject(error);
   }
