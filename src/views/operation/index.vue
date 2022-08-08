@@ -43,6 +43,7 @@
         <div class="list-top-btn">
           <dkd-button
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
+            @click="openMask"
           >
             <span>
               <svg-icon
@@ -52,6 +53,37 @@
               >新建</span
             >
           </dkd-button>
+          <!-- 弹窗 -->
+          <!-- 新建工单的弹层 -->
+          <el-dialog
+            title="收货地址"
+            :visible="dialogFormVisible"
+            :dialogFormVisible="dialogFormVisible"
+          >
+            <el-form :model="form">
+              <el-form-item label="设备编号">
+                <el-input v-model="form.name" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="工单类型">
+                <el-input v-model="form.name" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="运营人员">
+                <el-select v-model="form.region" placeholder="请选择活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="备注">
+                <el-input type="textarea"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="dialogFormVisible = false"
+                >确 定</el-button
+              >
+            </div>
+          </el-dialog>
         </div>
         <!-- 表格 -->
         <dkd-table
@@ -89,10 +121,21 @@
 import { searchTasks, getTaskStatus } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "@/components/DkdTable";
+// import Newlybuilt from "./components/Newlybuilt.vue";
 
 export default {
   data() {
     return {
+      dialogFormVisible: false,
+      form: {
+        name: "",
+        region: "",
+        date1: "",
+        date2: "",
+        delivery: false,
+        type: [],
+        resource: "",
+      },
       formInline: {
         taskCode: "",
         status: "",
@@ -157,6 +200,10 @@ export default {
     // 搜索工单
     async search() {
       await this.searchTasks(this.formInline);
+    },
+    openMask() {
+      this.dialogFormVisible = true;
+      console.log(111);
     },
   },
 };

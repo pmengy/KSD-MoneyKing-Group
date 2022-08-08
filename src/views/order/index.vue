@@ -16,7 +16,6 @@
           </el-form-item>
           <el-form-item label="工单状态:" class="item">
             <el-date-picker
-              v-model="value1"
               type="daterange"
               range-separator="~"
               start-placeholder="开始日期"
@@ -68,11 +67,13 @@
         </div>
       </el-card>
     </div>
+    
   </div>
 </template>
 
 <script>
-import { getOrderStatus,getTaskStatus } from "@/api/order";
+import { getOrderStatus } from "@/api/order";
+import { getTaskStatus } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "@/components/DkdTable";
 
@@ -80,7 +81,7 @@ export default {
   data() {
     return {
       formInline: {
-        taskCode: "",
+        innerCode: "",
         status: "",
       },
       currentList: [],
@@ -90,14 +91,10 @@ export default {
       totalCount: "",
       tableLabel: [
         { label: "订单编号", width: "118", prop: "innerCode" },
-        { label: "商品名称", width: "130", prop: "skuName" },
-        { label: "订单金额(元)", width: "136", prop: "amount" },
-        { label: "设备编号", width: "130", prop: "createType" },
-        {
-          label: "订单状态",
-          width: "136",
-          prop: "status",
-        },
+        { label: "商品名称", width: "150", prop: "skuName" },
+        { label: "订单金额 (元)", width: "150", prop: "amount" },
+        { label: "设备编号", width: "150", prop: "createType" },
+        { label: "订单状态", width: "150", prop: "status" },
         { label: "创建日期", width: "160", prop: "createTime" },
       ],
     };
@@ -105,14 +102,31 @@ export default {
   components: { DkdButton, DkdTable },
   created() {
     this.getTaskStatus();
-    this.getOrderStatus()
+    this.getOrderStatus();
   },
 
   methods: {
     // 获取全部工单列表
     async getOrderStatus(params) {
       const res = await getOrderStatus(params);
+      console.log(res.currentPageRecords);
       console.log(res);
+      res.data.currentPageRecords.forEach((item) => {
+        if (item.status === 0) {
+          item.status = "创建";
+        }
+        if (item.status === 1) {
+          item.status = "支付成功";
+        }
+        if (item.status === 2) {
+          item.status = "出货成功";
+        } 
+         if (item.status === 3){
+          item.status = "出货失败";
+        }
+      });
+
+      // console.log(res);
       this.currentList = res.data.currentPageRecords;
       this.pageIndex = res.data.pageIndex;
       this.totalPage = res.data.totalPage;
@@ -126,23 +140,15 @@ export default {
     },
     // 获取下一页数据
     async nextPage() {
-      await this.searchTasks({
-        pageIndex: parseInt(this.pageIndex) + 1,
-        taskCode: this.formInline.taskCode,
-        status: this.formInline.status,
-      });
+      await this.getOrderStatus(parseInt(this.pageIndex) + 1);
     },
-    // 获取下一页数据
+    // searchTasks
     async lastPage() {
-      await this.searchTasks({
-        pageIndex: parseInt(this.pageIndex) - 1,
-        taskCode: this.formInline.taskCode,
-        status: this.formInline.status,
-      });
+      await this.getOrderStatus(parseInt(this.pageIndex) - 1);
     },
     // 搜索工单
     async search() {
-      await this.searchTasks(this.formInline);
+      await getOrderStatus(this.formInline);
     },
   },
 };
