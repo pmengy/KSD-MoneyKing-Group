@@ -22,9 +22,14 @@
       :formatter="formatData"
     >
     </el-table-column>
-    <el-table-column label="操作" width="100">
-      <template>
-        <el-button type="text">查看详情</el-button>
+    <el-table-column label="操作" width="150">
+      <template slot-scope="scope">
+        <el-button type="text" @click="updateStaffInfo(scope.row)"
+          >修改</el-button
+        >
+        <el-button type="text" @click.native.prevent="deleteRow(scope.row)"
+          ><span style="color: red">删除</span></el-button
+        >
       </template>
     </el-table-column>
   </el-table>
@@ -32,6 +37,7 @@
 
 <script>
 import dayjs from "dayjs";
+// import { delStaffAPI } from "@/api/user";
 export default {
   data() {
     return {};
@@ -68,6 +74,15 @@ export default {
       }
       return cellValue;
     },
+    // 删除功能
+    deleteRow(row) {
+      this.$emit("delStaff", row.id);
+    },
+    // 修改功能
+    updateStaffInfo(row) {
+      // console.log(row);
+      this.$emit("updateInfo", row.id);
+    },
   },
 };
 </script>
@@ -84,5 +99,8 @@ export default {
 .el-table thead {
   font-weight: 400;
   color: #666;
+}
+.myButton {
+  cursor: pointer;
 }
 </style>
