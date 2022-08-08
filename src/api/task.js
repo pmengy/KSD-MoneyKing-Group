@@ -20,3 +20,13 @@ export function searchTasks(params) {
     params,
   });
 }
+
+/**
+ * 获取工单详情
+ * @returns promise
+ */
+export function getStateDetail(taskId) {
+  return request({
+    url: '/task-service/task/taskInfo' + taskId,
+  });
+}
