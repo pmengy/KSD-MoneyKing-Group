@@ -28,7 +28,7 @@
               >
               <el-col :span="6">
                 <div class="home-user-task-stats">
-                  <p>{{ ticketStatistics.progressTotal||'0' }}</p>
+                  <p>{{ ticketStatistics.progressTotal || "0" }}</p>
                   <div class="text-color2">
                     <p>进行工单（个）</p>
                   </div>
@@ -54,7 +54,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <div class="home-user-task-stats">
-                  <p style="color: red">1660</p>
+                  <p style="color: red">{{ order }}</p>
                 </div>
                 <div class="text-color2">
                   <p>订单量（个）</p>
@@ -62,7 +62,7 @@
               </el-col>
               <el-col :span="12">
                 <div class="home-user-task-stats">
-                  <p style="color: red">1995</p>
+                  <p style="color: red">{{ Count }}</p>
                   <div class="text-color2">
                     <p>销售额（万元）</p>
                   </div>
@@ -82,11 +82,18 @@
               <el-radio-group
                 v-model="radio1"
                 size="mini"
-                style="margin-left: 390px; background-color: red"
+                style="margin-left: 390px"
+                @change="changes"
               >
-                <el-radio-button label="周"></el-radio-button>
-                <el-radio-button label="月"></el-radio-button>
-                <el-radio-button label="年"></el-radio-button>
+                <el-radio-button label="周" @click="dyat = 7"></el-radio-button>
+                <el-radio-button
+                  label="月"
+                  @click="dyat = 30"
+                ></el-radio-button>
+                <el-radio-button
+                  label="年"
+                  @click="dyat = 360"
+                ></el-radio-button>
               </el-radio-group>
             </div>
             <!-- 中间echars -->
@@ -104,8 +111,31 @@
             <div class="title">
               商品热榜 <span> {{ endatd }} ~ {{ statd }}</span>
             </div>
-          </div></el-col
-        >
+            <el-table
+              v-for="(item, index) in SkuTop"
+              :key="index"
+              :data="SkuTop"
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="order"
+                width="35"
+                style="background: url(~@/assets/order/4.png)"
+                type="index"
+              ></el-table-column>
+
+              <el-table-column
+                prop="skuName"
+                width="120"
+                class-name="name"
+              ></el-table-column>
+
+              <el-table-column
+                prop="count"
+                class-name="count"
+              ></el-table-column>
+            </el-table></div
+        ></el-col>
       </el-row>
       <!-- 底部一个 -->
       <el-row :gutter="20" style="margin-bottom: 20px">
@@ -119,9 +149,9 @@
               <!-- 合作区域 -->
               <div class="pieChart" id="pieCharts"></div>
               <div class="Points">
-                <p>16</p>
+                <p>{{ NodeCount }}</p>
                 <span>点位数</span>
-                <p>8</p>
+                <p>{{ PrtnerCount }}</p>
                 <span>合作商</span>
               </div>
             </div>
@@ -141,58 +171,135 @@
 </template>
 
 <script>
-import { getUserWork, getregionCollect } from "@/api/home";
+import {
+  getUserWork,
+  getregionCollect,
+  getregionOrderCount,
+  getregionAmountCollect,
+  getNodeCount,
+  getPrtnerCount,
+  getnodeCollect,
+  getSkuTop,
+  getOrderAmount,
+} from "@/api/home";
 import dayjs from "dayjs";
+
 export default {
   name: "home",
   data() {
     return {
+      NodeCount: "",
+      PrtnerCount: "",
+      NodeCount: "",
       radio1: "周",
-      data: {
-        start: "2020-8-01",
-        end: "2020-10-07",
-      },
       ticketStatistics: {},
+      order: "",
+      Count: "",
+      datatni: [],
+      series: [],
+      nodeCollect: [],
+      SkuTop: [],
+      cylinderSeries: [],
+      cylinderXAxis: [],
+      dyat: 7,
     };
   },
+
   computed: {
+    // 时间区域
     td() {
       return dayjs().format("YYYY-MM-DD HH:mm:ss");
     },
     atd() {
-      return dayjs().subtract(7, "day").format("YYYY-MM-DD HH:mm:ss");
+      return dayjs().subtract(this.dyat, "day").format("YYYY-MM-DD HH:mm:ss");
     },
     statd() {
       return dayjs().format("YYYY-MM-DD");
     },
     endatd() {
-      return dayjs().subtract(7, "day").format("YYYY-MM-DD");
+      return dayjs().subtract(this.dyat, "day").format("YYYY-MM-DD");
     },
   },
   created() {
+    this.getregionAmountCollect();
     this.getUserWorks();
     this.getregionCollect();
+    this.getregionOrderCount();
+    this.getNodeCount();
+    this.getPrtnerCount();
+    this.getnodeCollect();
+    this.getSkuTop();
+    this.getOrderAmount();
   },
-  mounted() {
-    this.myEcharts();
-    this.myEcharts2();
-    this.myPieChart();
-  },
+  mounted() {},
   methods: {
+    // 改变时间事件
+    changes() {
+      if (this.radio1 == "周") {
+        this.dyat = 7;
+      } else if (this.radio1 == "月") {
+        this.dyat = 30;
+      } else {
+        this.dyat = 360;
+      }
+      this.getOrderAmount();
+      this.getregionAmountCollect();
+    },
+    // 柱状图
+    async getOrderAmount() {
+      const res = await getOrderAmount(this.endatd, this.statd);
+      this.cylinderXAxis = res.data.xAxis;
+      this.cylinderSeries = res.data.series;
+      this.myEcharts();
+      console.log(res);
+    },
+    // 获取点位总数
+    async getNodeCount() {
+      const res = await getNodeCount();
+      this.NodeCount = res.data;
+      // console.log(res);
+    },
+    // 获取合作商总数
+    async getPrtnerCount() {
+      const res = await getPrtnerCount();
+      this.PrtnerCount = res.data;
+    },
+    // 合作商点位汇总统计饼状图
+    async getnodeCollect() {
+      const res = await getnodeCollect();
+      this.nodeCollect = res.data;
+      this.myPieChart();
+    },
+    // top排行
+    async getSkuTop() {
+      const res = await getSkuTop(10, this.endatd, this.statd);
+      this.SkuTop = res.data;
+    },
     // 获取工单数量
     async getUserWorks() {
-      console.log(this.atd);
-      console.log(this.td);
       const res = await getUserWork(this.atd, this.td);
-      console.log(res);
+
       this.ticketStatistics = res.data[0];
     },
     // 获取销售数量
-    async getregionCollect() {
-      const res = await getregionCollect(this.atd, this.td);
-      console.log(res);
+    async getregionOrderCount() {
+      const res = await getregionOrderCount({
+        start: this.atd,
+        end: this.td,
+      });
+
+      this.order = res.data;
     },
-    // 折线图
+    // 获取总量数量
+    async getregionCollect() {
+      const res = await getregionCollect({
+        start: this.atd,
+        end: this.td,
+      });
+      this.Count = (res.data / 1000000).toFixed(2);
+    },
+
+    // 柱状图
     myEcharts() {
       // 基于准备好的dom，初始化echarts实例
       var echarts = require("echarts");
@@ -207,7 +314,7 @@ export default {
 
         xAxis: {
           type: "category",
-          data: ["北京平", "霍营街"],
+          data: this.cylinderXAxis,
         },
         yAxis: {
           type: "value",
@@ -215,7 +322,7 @@ export default {
         },
         series: [
           {
-            data: [2800, 200],
+            data: this.cylinderSeries,
             barWidth: "5%",
             type: "bar",
           },
@@ -225,29 +332,28 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
     },
-    // 柱状图
+    // 获取线状图时间
+    async getregionAmountCollect() {
+      const res = await getregionAmountCollect(1, this.endatd, this.statd);
+      this.xAxis = res.data.xAxis;
+      this.series = res.data.series;
+      this.myEcharts2();
+    },
+    // 线性图
     myEcharts2() {
       var echarts = require("echarts");
       var myChart2 = echarts.init(document.getElementById("echars"));
-
       var option2 = {
         color: ["red"],
         title: {
           text: "销售额趋势图",
           left: "center",
         },
+        grid: { top: "18%", left: "20%", right: "2%", bottom: "24%" },
         xAxis: {
           type: "category",
-          data: [
-            "星期一",
-            "星期二",
-            "星期三",
-            "星期四",
-            "星期五",
-            "星期六",
-            "星期日",
-          ],
-          boundaryGap: false,
+          data: this.xAxis,
+          boundaryGap: true,
         },
         yAxis: {
           name: "单位/元",
@@ -255,7 +361,7 @@ export default {
         },
         series: [
           {
-            data: [45000, 0],
+            data: this.series,
             type: "line",
           },
         ],
@@ -290,13 +396,7 @@ export default {
             radius: ["10%", "70%"],
             center: ["50%", "50%"],
             roseType: "radius",
-            data: [
-              { value: 62.5, name: "金燕龙合作商" },
-              { value: 12.5, name: "天华物业" },
-              { value: 12.5, name: "北京合作商" },
-              { value: 6.25, name: "likede" },
-              { value: 6.25, name: "佳佳" },
-            ],
+            data: this.nodeCollect,
           },
         ],
       };
@@ -323,6 +423,73 @@ export default {
   }
   .echars2 {
     flex: 1;
+  }
+}
+::v-deep .el-table {
+  td:first-child {
+    .cell {
+      display: inline-block;
+      text-align: center;
+      width: 21px;
+      padding-left: 6px;
+      height: 20px;
+      margin-left: 2px;
+      text-align: center;
+      font-size: 12px;
+      font-family: zihun143-zhengkuchaojihei, zihun143;
+      font-weight: 400;
+      line-height: 14px;
+      background: url(~@/assets/order/4.png) no-repeat;
+      color: #e9b499;
+    }
+  }
+  td:nth-child(2) {
+    .cell {
+      height: 20px;
+      font-size: 14px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: #333;
+      line-height: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  td:last-child {
+    height: 20px;
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #737589;
+    line-height: 20px;
+    text-align: right;
+  }
+}
+::v-deep .el-table {
+  tr:nth-child(1) {
+    td:nth-child(1) {
+      .cell {
+        background: url(~@/assets/order/1.png);
+        color: #8e5900;
+      }
+    }
+  }
+  tr:nth-child(2) {
+    td:nth-child(1) {
+      .cell {
+        background: url(~@/assets/order/2.png);
+        color: #494949;
+      }
+    }
+  }
+  tr:nth-child(3) {
+    td:nth-child(1) {
+      .cell {
+        background: url(~@/assets/order/3.png);
+        color: #cf6d3d;
+      }
+    }
   }
 }
 .moreIcon {
