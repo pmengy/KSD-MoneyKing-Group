@@ -44,3 +44,26 @@ export const changeAddressInfoApi = (data, id) => {
     data
   })
 }
+/**
+ * 删除区域
+ * @param {区域id} id 
+ * @returns 
+ */
+export const delAddressInfoApi=(id)=>{
+  return request({
+    url:`/vm-service/region/${id}`,
+    method: 'DELETE',
+  })
+}
+/**
+ * 新增区域
+ * @param {regionName remark} data 
+ * @returns 
+ */
+export const addAddressInfoApi = (data) =>{
+  return request({
+    url:'/vm-service/region',
+    method: 'POST',
+    data
+  })
+}
