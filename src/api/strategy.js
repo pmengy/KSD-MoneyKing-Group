@@ -63,3 +63,23 @@ export function getmachineApi() {
     data
   });
 }
+
+/**
+ * 策略搜索售货机
+ * @returns promise
+ */
+ export function getThemachineApi(policyId) {
+  return request({
+    url: "/vm-service/policy/vmList/" +policyId,
+  });
+}
+/**
+ * 策略搜索售货机分页
+ * @returns promise
+ */
+ export function getThemachineApiF(policyId,pageIndex) {
+  return request({
+    url: "/vm-service/policy/vmList/"+policyId,
+    params: pageIndex
+  });
+}

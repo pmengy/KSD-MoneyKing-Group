@@ -28,6 +28,7 @@
           :currentIndex="pageIndex * 10"
           @compile="showcompile"
           @Dev="onRemove"
+          @fine="GAGAfine"
         />
         <!-- 分页 -->
         <div class="Pagination">
@@ -52,7 +53,7 @@
         </div>
       </el-card>
     </div>
-    <!-- 新建弹窗 -->
+    <!-- 添加删除弹层 -->
     <el-dialog :title="Textted" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="策略名称" label-width="150px" class="formm">
@@ -79,10 +80,16 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="FormVisible">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 详情弹出层 -->
+    <Layerthickness
+      ref="Layerth"
+      :Visible.sync="dialogVisible"
+      @onClose="onClose"
+    ></Layerthickness>
   </div>
 </template>
 
@@ -90,6 +97,7 @@
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/body.vue";
 import Toubu from "./components/TOUbu.vue";
+import Layerthickness from "./components/Layerthickness.vue";
 import {
   getmachineApi,
   getSmachineApi,
@@ -105,8 +113,10 @@ export default {
       Xg: "", //当前id
       add_X: true, // 决定添加还是修改
       currentList: [], //列表数据
+      fineList: [], //详情表数据
       pageIndex: "", //实现换页页码不变
       dialogFormVisible: false, // 控制弹窗
+      dialogVisible: false, //控制详情页
       totalPage: "",
       totalCount: "",
       pageIndex: "",
@@ -121,7 +131,7 @@ export default {
       ],
     };
   },
-  components: { DkdButton, DkdTable, Toubu },
+  components: { DkdButton, DkdTable, Toubu, Layerthickness },
   created() {
     this.getmachineApi();
   },
@@ -156,12 +166,24 @@ export default {
       this.dialogFormVisible = true;
       this.add_X = true;
     },
+    // 取消
+    cancel() {
+      this.dialogFormVisible = false;
+      this.form = {
+        policyName: "",
+        discount: "",
+      };
+    },
     // 修改弹出
     async showcompile(val) {
       console.log(val);
       this.add_X = false;
       this.Xg = val.policyId;
       this.dialogFormVisible = true;
+      this.form = {
+        policyName: val.policyName,
+        discount: val.discount,
+      };
     },
     // 添加/修改
     async FormVisible() {
@@ -227,6 +249,15 @@ export default {
       this.pageIndex = parseInt(this.pageIndex) - 1;
       this.currentList = res.data.currentPageRecords;
       console.log(this.currentList);
+    },
+    // 展开详情
+    GAGAfine(val) {
+      this.dialogVisible = true;
+      this.$refs.Layerth.getThemachineApi(val)
+    },
+    // 关闭详情
+    onClose() {
+      this.dialogVisible = false;
     },
   },
 };
