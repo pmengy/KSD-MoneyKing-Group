@@ -58,7 +58,11 @@
       </el-card>
     </div>
     <!-- 弹层 -->
-    <DataTable :Visible.sync="dialogVisible"></DataTable>
+    <DataTable
+      :Visible.sync="dialogVisible"
+      @onClose="dialogVisible = false"
+      @Acharm="adddialog"
+    ></DataTable>
   </div>
 </template>
 
@@ -151,8 +155,18 @@ export default {
     },
     // 新增
     Layerthickness() {
-      console.log(11);
       this.dialogVisible = true;
+    },
+    // 新建完成
+    adddialog() {
+      this.getStrategyApiF();
+      this.dialogVisible = false;
+      this.$notify({
+        title: "成功",
+        message: "添加商品成功",
+        type: "success",
+        position: "bottom-right",
+      });
     },
   },
 };

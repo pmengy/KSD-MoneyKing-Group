@@ -12,7 +12,7 @@
           <dkd-button
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
           >
-            <span @click="dialogFormVisible = true">
+            <span @click="addx">
               <svg-icon
                 icon-class="add"
                 style="margin-right: 8px; font-size: 15px"
@@ -196,6 +196,10 @@ export default {
           });
         });
       } catch (e) {}
+    },
+    addx() {
+      this.dialogFormVisible = true;
+      this.add_X = true;
     },
   },
 };
