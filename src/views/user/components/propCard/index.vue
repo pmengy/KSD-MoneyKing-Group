@@ -67,19 +67,21 @@
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
-          accept="image.jpg/png"
+          accept="image.jpg"
         >
           <div class="el-upload__tip" slot="tip">
-            只能上传jpeg/png文件，且不超过2000kb
+            只能上传jpeg文件，且不超过2000kb
           </div>
           <img v-if="staffInfo.image" :src="staffInfo.image" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-checkbox-group v-model="staffInfo.status">
-          <el-checkbox label="是否启用" name="type"></el-checkbox>
-        </el-checkbox-group>
+        <el-checkbox
+          v-model="staffInfo.status"
+          value="1"
+          label="是否启用"
+        ></el-checkbox>
       </el-form-item>
     </el-form>
 
@@ -110,7 +112,7 @@ export default {
         mobile: "", //手机号
         regionId: "", //所属区域id
         regionName: "", //所属区域名称
-        status: "", //是否启用状态
+        status: false, //是否启用状态
         image: "", //头像url
       },
       roleName: "", //选择的角色名
@@ -177,14 +179,12 @@ export default {
         return "编辑人员信息";
       }
       return "新增人员";
-      // this.userInfo == {} ?  : "xinze",
     },
   },
 
   watch: {
     // 监视选择的角色名，将角色id分别赋值
     roleName(newVal, oldVal) {
-      console.log(newVal);
       if (newVal == "运营员") {
         this.staffInfo.roleId = 2;
       } else {
@@ -253,16 +253,14 @@ export default {
     // 确定
     async confirm() {
       // 将区域id保存到对象中
-
       await this.$refs.staffForm.validate();
+      // 编辑状态
       if (this.isEdit) {
-        const res = await updateStaffInfoAPI(
-          this.userInfo.userId,
-          this.staffInfo
-        );
+        await updateStaffInfoAPI(this.userInfo.userId, this.staffInfo);
         this.$emit("onClose");
         this.$message.success("更新用户信息成功！");
       } else {
+        // 添加状态
         this.staffInfo.regionId = this.regionId[0].id;
         try {
           const { data } = await upLoadAddStaffInfoAPI(this.staffInfo);

@@ -144,17 +144,16 @@ export default {
       this.getUserList();
     },
     onClose() {
-      console.log("关闭");
+      // console.log(123);
+      // 触发刷新
       this.getUserList();
-      console.log("关闭");
+      // 关闭弹层
       this.visible = false;
-      console.log("关闭");
+      // 置空传递的对象
       this.userInfo = {};
-      console.log("关闭");
     },
     // 新增人员
     addStaff() {
-      // console.log(2222);
       // 展开弹层
       this.visible = true;
     },
