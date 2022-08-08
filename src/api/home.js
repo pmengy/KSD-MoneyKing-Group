@@ -1,9 +1,8 @@
 import request from "@/utils/request";
 
-export function getUserWork(data) {
+export function getUserWork(start, end) {
   return request({
-    url: "/task-service/task/userWork",
-    params: data,
+    url: `/task-service/task/taskReportInfo/${start}/${end}`,
   });
 }
 

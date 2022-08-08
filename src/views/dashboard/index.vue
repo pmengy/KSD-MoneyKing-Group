@@ -20,7 +20,7 @@
               </el-col>
               <el-col :span="6">
                 <div class="home-user-task-stats">
-                  <p>{{ ticketStatistics.workCount }}</p>
+                  <p>{{ ticketStatistics.completedTotal }}</p>
                   <div class="text-color2">
                     <p>完成工单（个）</p>
                   </div>
@@ -28,7 +28,7 @@
               >
               <el-col :span="6">
                 <div class="home-user-task-stats">
-                  <p>{{ ticketStatistics.progressTotal }}</p>
+                  <p>{{ ticketStatistics.progressTotal||'0' }}</p>
                   <div class="text-color2">
                     <p>进行工单（个）</p>
                   </div>
@@ -36,7 +36,7 @@
               >
               <el-col :span="6">
                 <div class="home-user-task-stats">
-                  <p>{{ ticketStatistics.cancelCount }}</p>
+                  <p>{{ ticketStatistics.cancelTotal }}</p>
                   <div class="text-color2">
                     <p>取消工单（个）</p>
                   </div>
@@ -183,20 +183,13 @@ export default {
     async getUserWorks() {
       console.log(this.atd);
       console.log(this.td);
-      const res = await getUserWork({
-        userId: 1,
-        start: this.atd,
-        end: this.td,
-      });
-      // console.log(res);
-      this.ticketStatistics = res.data;
+      const res = await getUserWork(this.atd, this.td);
+      console.log(res);
+      this.ticketStatistics = res.data[0];
     },
     // 获取销售数量
     async getregionCollect() {
-      const res = await getregionCollect(
-        this.atd,
-        this.td
-      );
+      const res = await getregionCollect(this.atd, this.td);
       console.log(res);
     },
     // 折线图
