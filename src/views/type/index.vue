@@ -28,6 +28,7 @@
       <el-card class="box-search" shadow="never">
         <div class="list-top-btn">
           <dkd-button
+            @click="addType"
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
           >
             <span>
@@ -63,8 +64,15 @@
           </el-table-column>
           ><el-table-column label="操作"
             ><template slot-scope="scope">
-              <el-button type="text">修改</el-button>
-              <el-button type="text" style="color: #ff5a5a">删除</el-button>
+              <el-button type="text" @click="editType(scope.row)"
+                >修改</el-button
+              >
+              <el-button
+                type="text"
+                @click="delType(scope.row.typeId)"
+                style="color: #ff5a5a"
+                >删除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -77,18 +85,25 @@
               :disabled="pageIndex === '1'"
               color="#606266"
               style="margin-right: 20px"
+              @click="lastPage"
               >上一页</DkdButton
             >
             <DkdButton
               :disabled="pageIndex === totalPage"
               color="#606266"
               background="#d5ddf8"
+              @click="nextPage"
               >下一页</DkdButton
             >
           </p>
         </div>
       </el-card>
-      <prop-card :visible.sync="visible" />
+      <prop-card
+        :visible.sync="visible"
+        ref="propCard"
+        @onClose="visible = false"
+        @onConfirm="confirm"
+      />
     </div>
   </div>
 </template>
@@ -96,7 +111,7 @@
 <script>
 import DkdButton from "@/components/DkdButton";
 import "@/assets/images/defaultImg.jpg";
-import { getVmTypeList } from "@/api/type";
+import { getVmTypeList, delVmType } from "@/api/type";
 import propCard from "./components/propCard/index.vue";
 export default {
   data() {
@@ -106,7 +121,7 @@ export default {
       totalPage: "",
       totalCount: "",
       name: "",
-      visible: true,
+      visible: false,
     };
   },
   components: { DkdButton, propCard },
@@ -129,6 +144,47 @@ export default {
     },
     search() {
       this.getVmTypeList({ name: this.name });
+    },
+    editType(obj) {
+      this.visible = true;
+      this.$refs.propCard.vmInfo = obj;
+    },
+    addType() {
+      this.visible = true;
+      this.$refs.propCard.vmInfo = {
+        name: "",
+        vmCol: undefined,
+        vmRow: undefined,
+        channelMaxCapacity: undefined,
+        model: "",
+        image: "",
+      };
+    },
+    async delType(id) {
+      try {
+        await delVmType(id);
+        this.getVmTypeList();
+        this.$message.success("删除设备成功");
+      } catch (error) {
+        this.$message.error("删除失败");
+      }
+    },
+    // 获取下一页数据
+    async nextPage() {
+      await this.getVmTypeList({
+        pageIndex: parseInt(this.pageIndex) + 1,
+        name: this.name,
+      });
+    },
+    // 获取上一页数据
+    async lastPage() {
+      await this.getVmTypeList({
+        pageIndex: parseInt(this.pageIndex) - 1,
+        name: this.name,
+      });
+    },
+    confirm() {
+      this.getVmTypeList();
     },
   },
   computed: {

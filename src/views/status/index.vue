@@ -241,7 +241,7 @@ export default {
         innerCode: this.innerCode,
       });
     },
-    // 获取下一页数据
+    // 获取上一页数据
     async lastPage() {
       await this.getVmList({
         pageIndex: parseInt(this.pageIndex) - 1,
