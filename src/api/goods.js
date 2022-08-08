@@ -100,3 +100,54 @@ export function getssStrategyApi(className) {
     params
   });
 }
+
+/**
+ * 商品图片上传
+ * @returns promise
+ */
+ export function getimgApi(fileName) {
+  return request({
+    url: "/vm-service/sku/fileUpload",
+    method: 'POST',
+    data:
+      fileName
+    ,
+    headers:{
+      'Content-Type': 'multipart/form-data	'
+    }
+  });
+}
+/**
+ * 商品添加
+ * @returns promise
+ */
+ export function postStrategyApiF(data) {
+  return request({
+    url: "/vm-service/sku",
+    method:'POST',
+    data
+  });
+}
+/**
+ * 商品修改
+ * @returns promise
+ */
+ export function postStrategyApiFF(data,skuId) {
+  return request({
+    url: "/vm-service/sku/"+skuId,
+    method:'PUT',
+    data
+  });
+}
+/**
+ * 商品上传文件
+ * @returns promise
+ */
+ export function postStrategyApiSC(fileName) {
+  return request({
+    url: "/vm-service/sku/upload",
+    method:'POST',
+    data:fileName
+    
+  });
+}
