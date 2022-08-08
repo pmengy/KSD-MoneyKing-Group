@@ -55,7 +55,7 @@
     <!-- 新建弹窗 -->
     <el-dialog :title="Textted" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="活动名称" label-width="150px" class="formm">
+        <el-form-item label="商品类型名称" label-width="150px" class="formm">
           <el-input
             size="large"
             type="text"
@@ -151,7 +151,7 @@ export default {
       }
     },
     // 修改时弹框
-    async showcompile(id) {
+    showcompile(id) {
       console.log(id);
       this.add_X = false;
       this.Xg = id;

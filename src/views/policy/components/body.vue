@@ -23,9 +23,19 @@
     </el-table-column>
     <el-table-column label="操作" width="170">
       <template slot-scope="scope">
-        <el-button type="text" style="color:#4368e1">查看详情</el-button>
-        <el-button type="text" style="color:#4368e1">修改</el-button>
-        <el-button type="text" style="color:red">删除</el-button>
+        <el-button type="text" style="color: #4368e1">查看详情</el-button>
+        <el-button
+          type="text"
+          style="color: #4368e1"
+          @click.native="$emit('compile', scope.row)"
+          >修改</el-button
+        >
+        <el-button
+          type="text"
+          style="color: red"
+          @click.native="$emit('Dev', scope.row.policyId)"
+          >删除</el-button
+        >
       </template>
     </el-table-column>
   </el-table>
