@@ -9,10 +9,10 @@
       >
         <el-form :inline="true" class="demo-form-inline">
           <el-form-item label="设备编号:" class="item">
-            <el-input placeholder="请输入"></el-input>
+            <el-input v-model.trim="name" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item>
-            <dkd-button>
+            <dkd-button @click="search">
               <span>
                 <svg-icon
                   icon-class="search"
@@ -39,6 +39,35 @@
             >
           </dkd-button>
         </div>
+        <el-table :data="currentList" style="width: 100%" empty-text="暂无数据">
+          <el-table-column
+            type="index"
+            :index="indexMethod"
+            label="序号"
+            width="80"
+          >
+          </el-table-column>
+          <el-table-column prop="name" label="型号名称" width="180">
+          </el-table-column>
+          <el-table-column prop="model" label="型号编码"> </el-table-column>
+          <el-table-column prop="image" label="设备图片">
+            <template slot-scope="scope"
+              ><img
+                style="width: 24px; height: 24px; border-radius: 24px"
+                :src="scope.row.image || '@/assets/images/defaultImg.jpg'"
+                alt=""
+            /></template> </el-table-column
+          ><el-table-column prop="vmRow" label="货道行"> </el-table-column
+          ><el-table-column prop="vmCol" label="货道列"> </el-table-column>
+          ><el-table-column prop="channelMaxCapacity" label="设备容量">
+          </el-table-column>
+          ><el-table-column label="操作"
+            ><template slot-scope="scope">
+              <el-button type="text">修改</el-button>
+              <el-button type="text" style="color: #ff5a5a">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
         <!-- 分页 -->
         <div class="Pagination">
           <p>共{{ totalCount }}条记录 第{{ pageIndex }}/{{ totalPage }}页</p>
@@ -59,12 +88,16 @@
           </p>
         </div>
       </el-card>
+      <prop-card :visible.sync="visible" />
     </div>
   </div>
 </template>
 
 <script>
 import DkdButton from "@/components/DkdButton";
+import "@/assets/images/defaultImg.jpg";
+import { getVmTypeList } from "@/api/type";
+import propCard from "./components/propCard/index.vue";
 export default {
   data() {
     return {
@@ -72,13 +105,37 @@ export default {
       pageIndex: "",
       totalPage: "",
       totalCount: "",
+      name: "",
+      visible: true,
     };
   },
-  components: { DkdButton },
+  components: { DkdButton, propCard },
 
-  created() {},
+  created() {
+    this.getVmTypeList();
+  },
 
-  methods: {},
+  methods: {
+    indexMethod(index) {
+      return parseInt(this.currentIndex) - 9 + index;
+    },
+    // 获取设备类型列表
+    async getVmTypeList(params) {
+      const res = await getVmTypeList(params);
+      this.currentList = res.data.currentPageRecords;
+      this.pageIndex = res.data.pageIndex;
+      this.totalPage = res.data.totalPage;
+      this.totalCount = res.data.totalCount;
+    },
+    search() {
+      this.getVmTypeList({ name: this.name });
+    },
+  },
+  computed: {
+    currentIndex() {
+      return this.pageIndex * 10;
+    },
+  },
 };
 </script>
 

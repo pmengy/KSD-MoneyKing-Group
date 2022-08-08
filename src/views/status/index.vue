@@ -252,7 +252,7 @@ export default {
 .salesList {
   display: flex;
   width: 100%;
-  justify-content: start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   span {
     height: 60px;
