@@ -118,3 +118,31 @@ export const updateStaffInfoAPI = (id, data) =>
     method: "PUT",
     data,
   });
+
+/**
+ *获取人员工作量列表
+ * @param {Object} queryInfo pageIndex	是		
+    pageSize	是		
+    userName	否		用户名
+    roleId	否		角色Id
+    isRepair	否		是否是运维人员
+ * @returns promise
+ */
+export const getStaffTaskListAPI = (queryInfo) =>
+  request({
+    url: "/user-service/user/searchUserWork",
+    params: queryInfo,
+  });
+
+/**
+ *获取用户工作量(工单统计)
+ * @param {Object} queryInfo userId	否		
+      start	是	2020-10-01 00:00:00	
+      end	是	2020-10-31 00:00:00	
+ * @returns promise
+ */
+export const getTaskCountAPI = (queryInfo) =>
+  request({
+    url: "/task-service/task/userWork",
+    params: queryInfo,
+  });

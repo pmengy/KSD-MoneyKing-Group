@@ -140,6 +140,9 @@ export default {
         ],
 
         image: [{ required: true, message: "请上传头像文件", trigger: "blur" }],
+        status: [
+          { required: true, message: "请输入角色名称", trigger: "blur" },
+        ],
       },
       // regionId:''
     };
@@ -193,7 +196,6 @@ export default {
     },
     isEdit(newVal) {
       if (newVal) {
-        console.log(this.userInfo);
         if (this.userInfo.roleId === 3) {
           this.roleName = "维修员";
         } else if (this.userInfo.roleId == 2) {
@@ -208,6 +210,7 @@ export default {
     async handleAvatarSuccess(res, file) {
       const formData = new FormData();
       formData.append("fileName", file.raw);
+      console.log(formData);
 
       const { data } = await getImageUrlAPI(formData);
 
