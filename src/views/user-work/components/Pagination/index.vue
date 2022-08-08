@@ -35,9 +35,13 @@ export default {
 
   methods: {
     // 上一页
-    lastPage() {},
+    lastPage() {
+      this.$emit("lastPage");
+    },
     // 下一页
-    nextPage() {},
+    nextPage() {
+      this.$emit("nextPage");
+    },
   },
 };
 </script>

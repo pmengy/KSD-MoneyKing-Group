@@ -27,6 +27,7 @@
         :data="staffTaskList"
         border
         style="width: 100%"
+        :cell-style="{ height: '42px' }"
         center
         :header-cell-style="{
           background: '#f3f6fb',
@@ -62,29 +63,12 @@
 </template>
 
 <script>
-import time from "./getTimeFormat";
+import time from "./getTimeFormat.js";
 import { getTaskCountAPI } from "@/api/user";
 export default {
   name: "userTaskDialog",
   data() {
     return {
-      //   gridData: [
-      //     {
-      //       date: "2016-05-02",
-      //       name: "本周",
-      //       address: " 1518 弄",
-      //     },
-      //     {
-      //       date: "2016-05-04",
-      //       name: "本月",
-      //       address: "518 弄",
-      //     },
-      //     {
-      //       date: "2016-05-01",
-      //       name: "本年",
-      //       address: " 弄",
-      //     },
-      //   ],
       staffTaskList: [],
     };
   },
@@ -102,10 +86,13 @@ export default {
   created() {},
   watch: {
     // 监视弹出层是否关闭，如果打开就发ing求获取数据
-    Visible(newVal) {
-      if (newVal) {
-        this.getTaskCount();
-      }
+    Visible: {
+      handler(newVal) {
+        if (newVal) {
+          this.getTaskCount();
+        }
+      },
+      immediate: true,
     },
   },
   computed: {
