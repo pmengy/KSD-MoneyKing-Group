@@ -10,6 +10,7 @@
         <!-- top按钮 -->
         <div class="list-top-btn">
           <dkd-button
+            @click="Layerthickness"
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
           >
             <span>
@@ -56,6 +57,8 @@
         </div>
       </el-card>
     </div>
+    <!-- 弹层 -->
+    <DataTable :Visible.sync="dialogVisible"></DataTable>
   </div>
 </template>
 
@@ -63,9 +66,15 @@
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/body.vue";
 import Toubu from "./components/TOUbu.vue";
-import { getStrategyApiF, getStrategyApiFF,getssStrategyApiF } from "@/api/index";
+import DataTable from "./components/datatoto.vue";
+import {
+  getStrategyApiF,
+  getStrategyApiFF,
+  getssStrategyApiF,
+} from "@/api/index";
 
 export default {
+  name: "sku",
   data() {
     return {
       formInline: {
@@ -76,6 +85,7 @@ export default {
       pageIndex: "",
       totalPage: "",
       totalCount: "",
+      dialogVisible: false,
       tableLabel: [
         { label: "品牌", width: "200", prop: "brandName" },
         { label: "规格", width: "200", prop: "unit" },
@@ -89,7 +99,7 @@ export default {
       ],
     };
   },
-  components: { DkdButton, DkdTable, Toubu },
+  components: { DkdButton, DkdTable, Toubu, DataTable },
   created() {
     this.getStrategyApiF();
   },
@@ -138,6 +148,11 @@ export default {
       } else {
         this.getStrategyApiF();
       }
+    },
+    // 新增
+    Layerthickness() {
+      console.log(11);
+      this.dialogVisible = true;
     },
   },
 };
