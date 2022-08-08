@@ -33,6 +33,7 @@
           :currentList="currentList"
           :tableLabel="tableLabel"
           :currentIndex="pageIndex * 10"
+          @compile="showcompile"
         />
         <!-- 分页 -->
         <div class="Pagination">
@@ -59,9 +60,12 @@
     </div>
     <!-- 弹层 -->
     <DataTable
+      ref="Refdept"
       :Visible.sync="dialogVisible"
+      :Datastate.sync="Datastate"
       @onClose="dialogVisible = false"
       @Acharm="adddialog"
+      @Bcharm="bdddialog"
     ></DataTable>
   </div>
 </template>
@@ -90,6 +94,7 @@ export default {
       totalPage: "",
       totalCount: "",
       dialogVisible: false,
+      Datastate: true, //判断修改还是添加
       tableLabel: [
         { label: "品牌", width: "200", prop: "brandName" },
         { label: "规格", width: "200", prop: "unit" },
@@ -112,11 +117,11 @@ export default {
     // 获取数据
     async getStrategyApiF() {
       const res = await getStrategyApiF();
-      console.log(res);
       this.currentList = res.data.currentPageRecords;
       this.pageIndex = res.data.pageIndex;
       this.totalPage = res.data.totalPage;
       this.totalCount = res.data.totalCount;
+      console.log(this.currentList);
     },
     // 下一页
     async nextPage() {
@@ -153,9 +158,17 @@ export default {
         this.getStrategyApiF();
       }
     },
-    // 新增
+    // 新增弹框展示
     Layerthickness() {
       this.dialogVisible = true;
+      this.Datastate = true;
+    },
+    // 修改弹框展示
+    showcompile(val) {
+      this.dialogVisible = true;
+      this.Datastate = false;
+      console.log(val);
+      this.$refs.Refdept.getDeptByval(val);
     },
     // 新建完成
     adddialog() {
@@ -164,6 +177,16 @@ export default {
       this.$notify({
         title: "成功",
         message: "添加商品成功",
+        type: "success",
+        position: "bottom-right",
+      });
+    },
+    bdddialog() {
+      this.getStrategyApiF();
+      this.dialogVisible = false;
+      this.$notify({
+        title: "成功",
+        message: "修改商品成功",
         type: "success",
         position: "bottom-right",
       });

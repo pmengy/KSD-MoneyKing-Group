@@ -128,3 +128,14 @@ export function getssStrategyApi(className) {
     data
   });
 }
+/**
+ * 商品修改
+ * @returns promise
+ */
+ export function postStrategyApiFF(data,skuId) {
+  return request({
+    url: "/vm-service/sku/"+skuId,
+    method:'PUT',
+    data
+  });
+}

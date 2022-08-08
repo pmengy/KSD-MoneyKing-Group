@@ -95,13 +95,17 @@
 </template>
 
 <script>
-import { getStrategyApi, getimgApi, postStrategyApiF } from "@/api/index";
+import {
+  getStrategyApi,
+  getimgApi,
+  postStrategyApiF,
+  postStrategyApiFF,
+} from "@/api/index";
 export default {
   name: "userPropCard",
   data() {
     return {
       //   isShow: true, //控制是否展示弹出层
-      activeTitle: "新增人员",
       staffInfo: {
         skuName: "", //商品名称
         brandName: "", //品牌
@@ -110,6 +114,7 @@ export default {
         unit: "", // 规格
         skuImage: "", //头像url
       },
+      dataId: "", // 修改id
       roleNameList: [], //商品类型列表
       staffInfoRules: {
         //整个表单的校验规则
@@ -127,10 +132,20 @@ export default {
       type: Boolean, //
       required: true, //
     },
+    // 判断添加还是修改
+    Datastate: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   created() {
     this.getRoleId();
+  },
+  computed: {
+    activeTitle() {
+      return this.Datastate ? "添加商品" : "修改商品";
+    },
   },
 
   watch: {},
@@ -138,7 +153,6 @@ export default {
   methods: {
     // 图片处理
     async handleAvatarSuccess(res, file) {
-      console.log(11);
       console.log(file);
       const formData = new FormData();
       formData.append("fileName", file.raw);
@@ -160,12 +174,18 @@ export default {
       return isJPG && isLt2M;
     },
 
-    // 新增上传
+    // 新增上传/修改
     async onClose() {
       // 效验表单
       await this.$refs.form.validate();
-      await postStrategyApiF(this.staffInfo);
-      this.$emit("Acharm");
+      // 新增
+      if (this.Datastate) {
+        await postStrategyApiF(this.staffInfo);
+        this.$emit("Acharm");
+      } else {
+        await postStrategyApiFF(this.staffInfo, this.dataId);
+        this.$emit("Bcharm");
+      }
     },
     // 右上方关闭按钮/取消按钮
     handleClose() {
@@ -183,7 +203,19 @@ export default {
     async getRoleId() {
       const { data } = await getStrategyApi();
       this.roleNameList = data.currentPageRecords;
-      console.log(this.roleNameList);
+      console.log("商品类型", this.roleNameList);
+    },
+    // 编辑回显
+    async getDeptByval(val) {
+      this.staffInfo = {
+        skuName: val.skuName, //商品名称
+        brandName: val.brandName, //品牌
+        price: val.price, //商品价格
+        classId: val.classId, //商品类型
+        unit: val.unit, // 规格
+        skuImage: val.skuImage, //头像url
+      };
+      this.dataId = val.skuId;
     },
   },
 };
