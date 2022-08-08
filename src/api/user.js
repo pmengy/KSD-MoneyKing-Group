@@ -34,9 +34,87 @@ export function getUserInfo(id) {
   isRepair	否	true/false	是否是运维人员
  * @returns promise
  */
-export const getUserListAPI = (data) =>
+export const getUserListAPI = (query, data) =>
   request({
-    url: "/api/user-service/user/search",
-    // params: queryInfo,
+    url: "/user-service/user/search",
+    params: query,
+    data,
+  });
+
+/**
+ *获取角色列表
+ * @returns promise
+ */
+export const getRoleIdAPI = () =>
+  request({
+    url: "/user-service/role",
+  });
+
+/**
+ * 获取区域列表
+ * @param {Object} params   获取区域列表 pageIndex	否		当前页码
+  pageSize	否		每页数据个数
+  name	否		区域名称
+ * @returns promise
+ */
+export const getRegionListAPI = (params) =>
+  request({
+    url: "/vm-service/region/search",
+    params,
+  });
+
+/**
+ *图片上传获取图片上传后返回在线url地址
+ * @param {String} fileName 图片file
+ * @returns promise
+ */
+export const getImageUrlAPI = (fileName) =>
+  request({
+    url: "/vm-service/sku/fileUpload",
+    method: "POST",
+    data: fileName,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+/**
+   * 新增人员
+   * @param {Object} data  userName	string	必须		用户名	
+      roleId	integer	必须		角色Id	
+      mobile	string	必须		手机号	
+      regionId	string	必须		所属区域Id	
+      regionName	string	必须		所属区域名称	
+      status	boolean	必须		启用状态	
+      image	string	必须		头像Url 
+   * @returns promise
+   */
+export const upLoadAddStaffInfoAPI = (data) =>
+  request({
+    url: "/user-service/user",
+    method: "POST",
+    data,
+  });
+
+/**
+ *删除人员
+ * @param {String} id
+ * @returns  promise
+ */
+export const delStaffAPI = (id) =>
+  request({
+    url: `/user-service/user/${id}`,
+    method: "DELETE",
+  });
+
+/**
+ * 编辑修改用户资料
+ * id  用户id
+ * @returns promise
+ */
+export const updateStaffInfoAPI = (id, data) =>
+  request({
+    url: `/user-service/user/${id}`,
+    method: "PUT",
     data,
   });

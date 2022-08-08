@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <button :style="{ background: bgc, color }">
-      <!-- 接收按钮内容 -->
-      <slot />
-    </button>
-  </div>
+  <button :style="{ background: bgc, color }">
+    <!-- 接收按钮内容 -->
+    <slot />
+  </button>
 </template>
 
 <script>
@@ -12,21 +10,21 @@ export default {
   props: {
     bgc: {
       type: String,
-      default: 'linear-gradient(135deg, #ff9743, #ff5e20)'
+      default: "linear-gradient(135deg, #ff9743, #ff5e20)",
     },
     color: {
       type: String,
-      default: '#fff'
-    }
+      default: "#fff",
+    },
   },
   data() {
-    return {}
+    return {};
   },
 
   created() {},
 
-  methods: {}
-}
+  methods: {},
+};
 </script>
 
 <style lang="less" scoped>

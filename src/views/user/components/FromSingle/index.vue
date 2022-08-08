@@ -2,9 +2,9 @@
   <header>
     <el-card class="box-card">
       <div class="search">
-        <el-form :inline="true" :model="task" class="demo-form-inline">
+        <el-form :inline="true" class="demo-form-inline">
           <el-form-item label="人员搜索:">
-            <el-input v-model="task.taskCode" placeholder="请输入"></el-input>
+            <el-input v-model.trim="userName" placeholder="请输入"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -24,19 +24,17 @@
 export default {
   data() {
     return {
-      task: {
-        taskCode: "",
-        status: "",
-      },
+      // 保存输入框中的userName
+      userName: "",
     };
   },
-  name: "search",
+  name: "userSearch",
 
   created() {},
 
   methods: {
     search() {
-      this.$emit("searchTask", this.task);
+      this.$emit("searchInfo", this.userName);
     },
   },
 };
