@@ -139,3 +139,15 @@ export function getssStrategyApi(className) {
     data
   });
 }
+/**
+ * 商品上传文件
+ * @returns promise
+ */
+ export function postStrategyApiSC(fileName) {
+  return request({
+    url: "/vm-service/sku/upload",
+    method:'POST',
+    data:fileName
+    
+  });
+}
