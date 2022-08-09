@@ -31,7 +31,7 @@
     <el-table-column label="操作" width="200">
       <template slot-scope="scope">
         <el-button type="text" @click="getInfo(scope.row.id)"
-          >查看详情</el-button
+           class="operation" >查看详情</el-button
         >
         <!-- 弹出框 -->
         <el-dialog
@@ -69,7 +69,7 @@
             />
           </el-table>
         </el-dialog>
-        <el-button type="text" @click="change(scope.row)">修改</el-button>
+        <el-button type="text" @click="change(scope.row)" class="operation" >修改</el-button>
         <!-- 弹出框 -->
         <el-dialog
           :title="newTitle"
@@ -153,7 +153,7 @@
           </div>
         </el-dialog>
         <el-button type="text" style="color: red" @click="del(scope.row.id)"
-          >删除</el-button
+           class="operation" >删除</el-button
         >
       </template>
     </el-table-column>
@@ -426,5 +426,8 @@ export default {
   .addressAdd {
     width: 400px;
   }
+}
+.operation{
+  margin: 0 5px;
 }
 </style>
