@@ -7,7 +7,8 @@
           <!-- 工单统计盒子 -->
           <div class="grid-content bg-purple headerBox bgc1">
             <div class="title">
-              工单统计 <span> {{ endatd }} ~ {{ statd }}</span>
+              工单统计
+              <span>{{ endatd }} ~ {{ statd }}</span>
             </div>
             <el-row :gutter="20">
               <el-col :span="6">
@@ -24,32 +25,32 @@
                   <div class="text-color2">
                     <p>完成工单（个）</p>
                   </div>
-                </div></el-col
-              >
+                </div>
+              </el-col>
               <el-col :span="6">
                 <div class="home-user-task-stats">
                   <p>{{ ticketStatistics.progressTotal || "0" }}</p>
                   <div class="text-color2">
                     <p>进行工单（个）</p>
                   </div>
-                </div></el-col
-              >
+                </div>
+              </el-col>
               <el-col :span="6">
                 <div class="home-user-task-stats">
                   <p>{{ ticketStatistics.cancelTotal }}</p>
                   <div class="text-color2">
                     <p>取消工单（个）</p>
                   </div>
-                </div></el-col
-              >
+                </div>
+              </el-col>
             </el-row>
-          </div></el-col
-        >
-        <el-col :span="7"
-          ><div class="grid-content bg-purple headerBox bgc2">
+          </div>
+        </el-col>
+        <el-col :span="7">
+          <div class="grid-content bg-purple headerBox bgc2">
             <div class="title">
               销售统计
-              <span> {{ endatd }} ~ {{ statd }}</span>
+              <span>{{ endatd }} ~ {{ statd }}</span>
             </div>
             <el-row :gutter="20">
               <el-col :span="12">
@@ -66,11 +67,11 @@
                   <div class="text-color2">
                     <p>销售额（万元）</p>
                   </div>
-                </div></el-col
-              >
+                </div>
+              </el-col>
             </el-row>
-          </div></el-col
-        >
+          </div>
+        </el-col>
       </el-row>
       <!-- 中间和右边 -->
       <el-row :gutter="20">
@@ -78,7 +79,8 @@
           <!-- echars数据可视化 -->
           <div class="grid-content bg-purple" style="min-height: 365px">
             <div class="title">
-              工单统计 <span> {{ endatd }} ~ {{ statd }}</span>
+              工单统计
+              <span>{{ endatd }} ~ {{ statd }}</span>
               <el-radio-group
                 v-model="radio1"
                 size="mini"
@@ -100,42 +102,42 @@
             <div class="boxEchars">
               <div class="echars1" id="echars"></div>
               <div class="echars2" id="echars2"></div>
-            </div></div
-        ></el-col>
+            </div>
+          </div>
+        </el-col>
         <!-- 中间和右边 -->
-        <el-col :span="6"
-          ><div
+        <el-col :span="6" class="aside">
+          <div
             class="grid-content bg-purple"
-            style="height: 538px; margin-top: -170px"
+            style="height: 560px; margin-top: -180px"
           >
             <div class="title">
-              商品热榜 <span> {{ endatd }} ~ {{ statd }}</span>
+              商品热榜
+              <span>{{ endatd }} ~ {{ statd }}</span>
             </div>
-            <el-table
-              v-for="(item, index) in SkuTop"
-              :key="index"
-              :data="SkuTop"
-              style="width: 100%"
-            >
+            <el-table style="width: 100%" :data="SkuTop">
+              <template v-for="(item, index) in SkuTop"></template>
               <el-table-column
                 prop="order"
-                width="35"
+                width="30"
                 style="background: url(~@/assets/order/4.png)"
                 type="index"
+                :key="index"
               ></el-table-column>
-
               <el-table-column
                 prop="skuName"
-                width="120"
+                width="124"
                 class-name="name"
+                :key="index"
               ></el-table-column>
-
               <el-table-column
                 prop="count"
                 class-name="count"
+                :key="index"
               ></el-table-column>
-            </el-table></div
-        ></el-col>
+            </el-table>
+          </div>
+        </el-col>
       </el-row>
       <!-- 底部一个 -->
       <el-row :gutter="20" style="margin-bottom: 20px">
@@ -155,16 +157,17 @@
                 <span>合作商</span>
               </div>
             </div>
-          </div></el-col
-        >
+          </div>
+        </el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple" style="min-height: 300px">
             <div class="title">
               异常设备监控
               <span class="el-icon-s-unfold moreIcon2"></span>
             </div>
-            <div class="empenty"></div></div
-        ></el-col>
+            <div class="empenty"></div>
+          </div>
+        </el-col>
       </el-row>
     </div>
   </div>
@@ -197,11 +200,12 @@ export default {
       Count: "",
       datatni: [],
       series: [],
+      tableData: [],
       nodeCollect: [],
       SkuTop: [],
       cylinderSeries: [],
       cylinderXAxis: [],
-      dyat: 7,
+      dyat: 30,
     };
   },
 
@@ -258,13 +262,11 @@ export default {
       this.cylinderXAxis = res.data.xAxis;
       this.cylinderSeries = res.data.series;
       this.myEcharts();
-      console.log(res);
     },
     // 获取点位总数
     async getNodeCount() {
       const res = await getNodeCount();
       this.NodeCount = res.data;
-      // console.log(res);
     },
     // 获取合作商总数
     async getPrtnerCount() {
@@ -275,6 +277,7 @@ export default {
     async getnodeCollect() {
       const res = await getnodeCollect();
       this.nodeCollect = res.data;
+      console.log(res.data);
       this.myPieChart();
     },
     // top排行
@@ -318,7 +321,7 @@ export default {
           text: "销售额分布",
           left: "center",
         },
-        grid: { top: "18%", left: "20%", right: "2%", bottom: "24%" },
+        grid: { top: "18%", left: "19%", right: "0%", bottom: "24%" },
         xAxis: {
           type: "category",
           data: this.cylinderXAxis,
@@ -356,7 +359,7 @@ export default {
           text: "销售额趋势图",
           left: "center",
         },
-        grid: { top: "18%", left: "20%", right: "2%", bottom: "24%" },
+        grid: { top: "18%", left: "17%", right: "0%", bottom: "24%" },
         xAxis: {
           type: "category",
           data: this.xAxis,
@@ -386,9 +389,10 @@ export default {
         title: {
           left: "left",
         },
+
         tooltip: {
           trigger: "item",
-          formatter: "{b}<br/>总占比 : {c}% ",
+          formatter: "{b}<br/>总占比 : {d}% ",
         },
         toolbox: {
           show: true,
@@ -437,11 +441,12 @@ export default {
     .cell {
       display: inline-block;
       text-align: center;
-      width: 21px;
-      padding-left: 6px;
+      width: 22px;
       height: 20px;
       margin-left: 2px;
+      padding-left: 6px;
       text-align: center;
+      white-space: nowrap;
       font-size: 12px;
       font-family: zihun143-zhengkuchaojihei, zihun143;
       font-weight: 400;
@@ -514,14 +519,11 @@ export default {
 .empenty {
   width: 100%;
   height: 280px;
-  // background-color: red;
 }
 .cooperate {
   width: 100%;
   height: 280px;
-
   margin-top: 25px;
-  // background-color: red;
   display: flex;
   .pieChart {
     flex: 3;
@@ -568,6 +570,9 @@ export default {
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
   color: #333;
+  padding-top: 17px;
+  padding-bottom: -4px;
+
   span {
     margin-left: 10px;
     font-size: 12px;
@@ -668,7 +673,7 @@ export default {
 .grid-content {
   min-height: 36px;
   border-radius: 20px;
-  padding: 20px;
+  padding: 0 20px;
 }
 .row-bg {
   padding: 10px 0;
