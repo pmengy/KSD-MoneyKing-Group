@@ -76,9 +76,17 @@
                 <el-form ref="form" label-width="80px">
                   <el-col :span="8">
                     <el-form-item label="活动区域">
-                      <el-select placeholder="请选择活动区域">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
+                      <el-select
+                        v-model="optionTable"
+                        clearable
+                        placeholder="请选择活动区域"
+                      >
+                        <el-option
+                          v-for="(item, index) in labelKf"
+                          :key="index"
+                          :label="item.name"
+                          :value="item.name"
+                        ></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -87,25 +95,52 @@
                       <el-date-picker
                         v-model="value1"
                         type="daterange"
-                        range-separator="至"
+                        range-separator="~"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
+                        :picker-options="pickerOptions0"
                       >
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
                 </el-form>
+                <el-col style="margin-left: 100px" :span="2">
+                  <el-button
+                    type="primary"
+                    style="
+                      min-width: 80px;
+                      height: 36px;
+                      padding: 0;
+                      background-color: #5f84ff;
+                    "
+                    @click="fromChange"
+                    ><i class="el-icon-thumb"></i> 查询</el-button
+                  ></el-col
+                >
               </el-row>
               <!-- 中间表单详情 -->
               <el-row :gutter="24">
-                <el-col :span="5">笔数统计： 3225 个</el-col>
-                <el-col :span="5">收入统计： 22840.48 元</el-col>
-                <el-col :span="5">分成统计： 31.49 元</el-col>
+                <el-col :span="5"
+                  ><p>
+                    笔数统计： <span class="textcol">{{ weekCount }}</span> 个
+                  </p></el-col
+                >
+                <el-col :span="7"
+                  ><p>
+                    收入统计： <span class="textcol">{{ weekSale }}</span> 元
+                  </p></el-col
+                >
+                <el-col :span="5"
+                  ><p>
+                    分成统计： <span class="textcol">{{ weekBill }}</span> 元
+                  </p></el-col
+                >
               </el-row>
               <!-- 底部表栏 -->
               <formData
                 :tableLabel="tableLabel"
                 :currentList="currentList"
+                :loading="loading"
               ></formData>
             </div> </el-card
         ></el-col>
@@ -120,6 +155,7 @@ import {
   getCrderCount,
   getTotalBill,
   getPartnerCollect,
+  getPartnerSearch,
 } from "@/api/report";
 import formData from "./compents/DkdTable";
 import dayjs from "dayjs";
@@ -128,12 +164,26 @@ export default {
     return {
       dyat: 0,
       region: "",
+      optionTable: "",
+      value1: [
+        dayjs().subtract(7, "day").format("YYYY-MM-DD HH:mm:ss"),
+        dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      ],
+      pickerOptions0: {
+        disabledDate(time) {
+          return time.getTime() > Date.now() - 8.64e6; //如果没有后面的-8.64e6就是不可以选择今天的
+        },
+      },
       daySale: "",
+      loading: false,
       monSale: "",
       dayCount: "",
       monCount: "",
       dayBill: "",
       monBill: "",
+      weekBill: "",
+      weekCount: "",
+      weekSale: "",
       tableLabel: [
         { label: "订单日期", width: "180", prop: "date" },
         { label: "合作商", width: "170", prop: "ownerName" },
@@ -146,6 +196,8 @@ export default {
         },
         { label: "分成金额", width: "170", prop: "totalBill" },
       ],
+      labelKf: [],
+
       currentList: [],
     };
   },
@@ -160,6 +212,10 @@ export default {
     this.getMonBill();
     this.getDayBill();
     this.getPartnerCollect();
+    this.getWeekBill();
+    this.getWeekAmount();
+    this.getWeekCount();
+    this.getPartnerSearch();
   },
   computed: {
     // 时间区域
@@ -181,10 +237,40 @@ export default {
         "YYYY-MM-DD HH:mm:ss"
       );
     },
+    // 开始时间
+    startTime() {
+      return dayjs(this.value1[0]).format("YYYY-MM-DD HH:mm:ss");
+    },
+     endTime () {
+      return dayjs(this.value1[1]).format("YYYY-MM-DD HH:mm:ss");}
   },
   methods: {
+    // 获取搜索列表
+    async getPartnerSearch() {
+      const res = await getPartnerSearch();
+      this.labelKf = res.data.currentPageRecords;
+    },
+    // 表单数据
+    async fromChange() {
+      const startTime = dayjs(this.value1[0]).format("YYYY-MM-DD");
+      const endTime = dayjs(this.value1[1]).format("YYYY-MM-DD");
+      this.loading = true;
+      const res = await getPartnerCollect({
+        pageIndex: 1,
+        pageSize: 10,
+        partnerName: this.optionTable,
+        start: startTime,
+        end: endTime,
+      });
+      this.currentList = res.data.currentPageRecords;
+      this.getWeekAmount();
+      this.getWeekBill();
+      this.getWeekCount();
+      this.loading = false;
+    },
     // 获取表格数据
     async getPartnerCollect() {
+      this.loading = true;
       const res = await getPartnerCollect({
         start: this.endatd,
         end: this.statd,
@@ -192,14 +278,26 @@ export default {
         pageSize: 10,
       });
       this.currentList = res.data.currentPageRecords;
+      this.loading = false;
     },
     // 获取日收入
     async getOrderAmount() {
+      console.log(this.startTime);
       const res = await getOrderAmount({
         start: this.dayNow,
         end: this.td,
       });
       this.daySale = res.data;
+    },
+    // 获取周收入
+    async getWeekAmount() {
+
+      this.dyat = 7;
+      const res = await getOrderAmount({
+        start: this.startTime,
+        end: this.endTime,
+      });
+      this.weekSale = (res.data / 100).toFixed(2);
     },
     // 获取月收入
     async getMonAmount() {
@@ -218,6 +316,15 @@ export default {
       });
       this.dayCount = res.data;
     },
+    // 获取周销量
+    async getWeekCount() {
+
+      const res = await getCrderCount({
+        start: this.startTime,
+        end: this.endTime,
+      });
+      this.weekCount = res.data;
+    },
     // 获取月销量
     async getMonCount() {
       const res = await getCrderCount({
@@ -233,7 +340,14 @@ export default {
         end: this.td,
       });
       this.dayBill = res.data;
-      console.log(this.dayBill);
+    },
+    // 获取周分成
+    async getWeekBill() {
+      const res = await getTotalBill({
+        start: this.startTime,
+        end: this.endTime,
+      });
+      this.weekBill = (res.data / 100).toFixed(2);
     },
     // 获取月分成
     async getMonBill() {
@@ -288,6 +402,11 @@ export default {
   }
 }
 
+.textcol {
+  font-size: 20px;
+  color: #ff5757;
+  font-weight: 500;
+}
 .title {
   -webkit-box-align: center;
   -ms-flex-align: center;
