@@ -15,14 +15,8 @@ import router from "./router";
 import "@/icons";
 import "@/permission";
 import * as directives from "@/directives";
-<<<<<<< HEAD
 import echarts from "echarts";
-
 Vue.prototype.$echarts = echarts;
-
-=======
-
->>>>>>> feature/userWorkList
 if (process.env.NODE_ENV === "production") {
   const { mockXHR } = require("../mock");
   mockXHR();
