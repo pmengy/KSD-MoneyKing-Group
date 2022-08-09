@@ -19,6 +19,7 @@
             maxlength="15"
             show-word-limit
             style="width: 96%"
+            @blur="getpersonnelfillApi"
             v-model="staffInfo.innerCode"
           >
           </el-input>
@@ -51,10 +52,10 @@
           >
             <el-option
               :value="item.userId"
-              :label="item.className"
+              :label="item.userName"
               v-for="item in personnelList"
               :key="item.userId"
-              >{{ item.className }}</el-option
+              >{{ item.userName }}</el-option
             >
           </el-select>
         </el-form-item>
@@ -84,7 +85,7 @@
 </template>
 
 <script>
-import { getStrategyApi } from "@/api/index";
+import { getpersonnelfillApi } from "@/api/index";
 import RePlen from "./grandson/replenishment";
 export default {
   name: "userPropCard",
@@ -133,11 +134,24 @@ export default {
   watch: {},
 
   methods: {
-    // 获取名单数据
+    // 新增表单
     async onClose() {
       await this.$refs.form.validate();
       // await postStrategyApiF(this.staffInfo);
       // this.$emit("Acharm");
+    },
+    // 获取人员数据列表
+    async getpersonnelfillApi() {
+      try {
+        const res = await getpersonnelfillApi(this.staffInfo.innerCode);
+        this.personnelList = res.data;
+        console.log(res);
+      } catch (error) {
+        this.$message({
+          message: "警告警告，设备编码错误",
+          type: "warning",
+        });
+      }
     },
     // 补货
     async replenishment() {
@@ -146,7 +160,8 @@ export default {
           this.RRePlenVisible = true;
         }
       });
-      await this.$refs.Newtable.NewtableList(this.innerCode)
+      // 给子组件传递编号
+      await this.$refs.Newtable.NewtableList(this.staffInfo.innerCode);
     },
     // 关闭补货
     onClosereP() {

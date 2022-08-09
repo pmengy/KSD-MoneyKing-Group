@@ -53,7 +53,17 @@ export function getthresholdworkApi(val) {
  */
      export function gettakefillApi(val,taskId) {
         return request({
-          url: " /api/task-service/taskDetails/ "+taskId,
+          url: "/task-service/taskDetails/"+taskId,
           data:val
         });
       }
+          /**
+ * 获取人员列表
+ * @returns promise
+ * 当前机器编号
+ */
+     export function getpersonnelfillApi(innerCode) {
+      return request({
+        url: "/user-service/user/repairerList/"+innerCode,
+      });
+    }
