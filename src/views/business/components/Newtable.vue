@@ -1,92 +1,91 @@
 <template>
-<div>
- <el-dialog
-    title="新增工单"
-    :visible="Visible"
-    :before-close="handleClose"
-    width="60%"
-  >
-    <el-form
-      ref="form"
-      label-width="100px"
-      :model="staffInfo"
-      :rules="staffInfoRules"
+  <div>
+    <el-dialog
+      title="新增工单"
+      :visible="Visible"
+      :before-close="handleClose"
+      width="60%"
     >
-      <el-form-item label="设备编号：" prop="innerCode">
-        <el-input
-          placeholder="请输入设备编号"
-          maxlength="15"
-          show-word-limit
-          style="width: 96%"
-          v-model="staffInfo.innerCode"
-        >
-        </el-input>
-      </el-form-item>
-      <el-form-item label="工单类型：" prop="createType">
-        <el-select
-          placeholder="请选择"
-          style="width: 96%"
-          v-model="staffInfo.createType"
-        >
-          <el-option
-            :value="item.createType"
-            :label="item.className"
-            v-for="item in workOrderList"
-            :key="item.createType"
-            >{{ item.className }}</el-option
+      <el-form
+        ref="form"
+        label-width="100px"
+        :model="staffInfo"
+        :rules="staffInfoRules"
+      >
+        <el-form-item label="设备编号：" prop="innerCode">
+          <el-input
+            ref="elinpt"
+            placeholder="请输入设备编号"
+            maxlength="15"
+            show-word-limit
+            style="width: 96%"
+            v-model="staffInfo.innerCode"
           >
-        </el-select>
-      </el-form-item>
-      <el-form-item label="补货数量：" prop="expectCapacity">
-       <el-link type="primary" icon="el-icon-s-order" @click="replenishment">补货清单</el-link>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="运营人员：" prop="userId">
-        <el-select
-          placeholder="请选择"
-          style="width: 96%"
-          v-model="staffInfo.userId"
-        >
-          <el-option
-            :value="item.userId"
-            :label="item.className"
-            v-for="item in personnelList"
-            :key="item.userId"
-            >{{ item.className }}</el-option
+          </el-input>
+        </el-form-item>
+        <el-form-item label="工单类型：" prop="createType">
+          <el-select
+            placeholder="请选择"
+            style="width: 96%"
+            v-model="staffInfo.createType"
           >
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注：" prop="desc">
-      <el-input 
-      placeholder="请输入备注,内容不超过40字"
-       type="textarea" 
-       v-model="staffInfo.desc" 
-       class="elinpp"
-       maxlength="40"
-       show-word-limit
-     ></el-input>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">取 消</el-button>
-      <el-button @click="onClose" type="primary">确 定</el-button>
-    </div>
-  </el-dialog>
-  <RePlen
-   ref="Newtable"
-   :Visible.sync="RRePlenVisible"
-   :tableLabel="tableLabel"
-   @onClose="onClosereP"
-  ></RePlen>
-</div>
- 
+            <el-option
+              :value="item.createType"
+              :label="item.className"
+              v-for="item in workOrderList"
+              :key="item.createType"
+              >{{ item.className }}</el-option
+            >
+          </el-select>
+        </el-form-item>
+        <el-form-item label="补货数量：" prop="expectCapacity">
+          <el-link type="primary" icon="el-icon-s-order" @click="replenishment"
+            >补货清单</el-link
+          >
+        </el-form-item>
+        <el-form-item label="运营人员：" prop="userId">
+          <el-select
+            placeholder="请选择"
+            style="width: 96%"
+            v-model="staffInfo.userId"
+          >
+            <el-option
+              :value="item.userId"
+              :label="item.className"
+              v-for="item in personnelList"
+              :key="item.userId"
+              >{{ item.className }}</el-option
+            >
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注：" prop="desc">
+          <el-input
+            placeholder="请输入备注,内容不超过40字"
+            type="textarea"
+            v-model="staffInfo.desc"
+            class="elinpp"
+            maxlength="40"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button @click="onClose" type="primary">确 定</el-button>
+      </div>
+    </el-dialog>
+    <RePlen
+      ref="Newtable"
+      :Visible.sync="RRePlenVisible"
+      :tableLabel="tableLabel"
+      @onClose="onClosereP"
+    ></RePlen>
+  </div>
 </template>
 
 <script>
-import {
-  getStrategyApi,
-} from "@/api/index";
-import RePlen from "./grandson/replenishment"
+import { getStrategyApi } from "@/api/index";
+import RePlen from "./grandson/replenishment";
 export default {
   name: "userPropCard",
   data() {
@@ -99,16 +98,16 @@ export default {
         desc: "", //备注
       },
       dataId: "", // id
-      RRePlenVisible:false,
-      workOrderList: [{ className:'补货信息', createType:1}], //工单类型列表
+      RRePlenVisible: false,
+      workOrderList: [{ className: "补货信息", createType: 1 }], //工单类型列表
       personnelList: [], //人员类型列表
       // 表单效验
       staffInfoRules: {
         //整个表单的校验规则
         innerCode: [{ required: true, message: "请输入", trigger: "blur" }],
-        createType: [{ required: true,message: "请输入",  trigger: "blur" }],
-        userId: [{ required: true,message: "请输入",  trigger: "blur" }],
-        desc: [{ required: true,message: "请输入",  trigger: "blur" }],
+        createType: [{ required: true, message: "请输入", trigger: "blur" }],
+        userId: [{ required: true, message: "请输入", trigger: "blur" }],
+        desc: [{ required: true, message: "请输入", trigger: "blur" }],
       },
       // 孙子表单
       tableLabel: [
@@ -128,37 +127,37 @@ export default {
     },
   },
 
-
-  created() {
-  },
-  computed: {
-  },
+  created() {},
+  computed: {},
 
   watch: {},
 
   methods: {
     // 获取名单数据
-     async onClose() {
+    async onClose() {
       await this.$refs.form.validate();
-        // await postStrategyApiF(this.staffInfo);
-        // this.$emit("Acharm");
+      // await postStrategyApiF(this.staffInfo);
+      // this.$emit("Acharm");
     },
     // 补货
-   async replenishment(){
-      await this.$refs.form.validateField("innerCode");
-      this.RRePlenVisible = true
+    async replenishment() {
+      this.$refs.form.validateField("innerCode", (errorMessage) => {
+        if (!errorMessage) {
+          this.RRePlenVisible = true;
+        }
+      });
       await this.$refs.Newtable.NewtableList(this.innerCode)
     },
     // 关闭补货
-    onClosereP(){
-       this.RRePlenVisible = false
+    onClosereP() {
+      this.RRePlenVisible = false;
     },
     // 右上方关闭按钮/取消按钮
-   async handleClose() {
+    async handleClose() {
       this.$emit("onClose");
       await this.$refs.form.clearValidate();
       this.staffInfo = {
-         innerCode: "", //设备编号
+        innerCode: "", //设备编号
         createType: "", //工单类型id
         userId: "", //运营人员id
         desc: "", //备注
@@ -211,10 +210,10 @@ export default {
   height: 100px;
   display: block;
 }
-.elinpp{
+.elinpp {
   width: 96%;
-};
-.el-textarea__inner{
+}
+.el-textarea__inner {
   min-height: 100px !important;
 }
 .dialog-footer {

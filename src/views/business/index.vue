@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import { searchTasks, getTaskStatus } from "@/api/task";
+import { searchTasks, getTaskStatus, getthresholdworkApi } from "@/api/index";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/Theform.vue";
 import State from "./components/state.vue";
@@ -148,7 +148,7 @@ export default {
       },
       // 配置表数据
       configurationFrom: {
-        alertValue: "1",
+        alertValue: "10",
       },
       StateVisible: false, // 控制状态弹窗
       NewtableVisible: false, //控制新建表单
@@ -226,7 +226,15 @@ export default {
       this.dialogFormVisible = true;
     },
     // 设置阈值
-    FormVisible() {},
+    async FormVisible() {
+      await getthresholdworkApi(this.configurationFrom);
+      this.$notify({
+        title: "成功",
+        message: "修改阈值成功",
+        type: "success",
+      });
+      this.dialogFormVisible = false;
+    },
     // 显示详情
     details(val) {
       this.StateVisible = true;
