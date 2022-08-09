@@ -193,8 +193,8 @@ export default {
     },
     // 修改弹框展示
     showcompile(val) {
-      this.dialogVisible = true;
-      this.Datastate = false;
+      this.dialogVisible = true;//弹窗显隐
+      this.Datastate = false; //修改
       console.log(val);
       this.$refs.Refdept.getDeptByval(val);
     },
