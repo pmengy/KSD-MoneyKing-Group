@@ -157,3 +157,37 @@ export function addVmType(data) {
     data,
   });
 }
+
+/**
+ * 获取售货机货道详情
+ * @param {*} innerCode 售货机id
+ * @returns promise
+ */
+export function getChannelList(innerCode) {
+  return request({
+    url: `/vm-service/channel/channelList/${innerCode}`,
+  });
+}
+
+/**
+ * 商品搜索
+ * @param {*} params
+ * @returns promise
+ */
+export function getEquipmentReviseList(params) {
+  return request({
+    url: "/vm-service/sku/search",
+    params,
+  });
+}
+
+/**
+ * 获取商圈下销量前10的商品(补货推荐)
+ * @param {*} businessId 
+ * @returns promise
+ */
+export function getEquipmentTop(businessId) {
+  return request({
+    url: `/vm-service/sku/businessTop10/${businessId}`,
+  });
+}
