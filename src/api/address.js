@@ -133,3 +133,49 @@ export const delNodeAddressApi =(id)=>{
     method: 'DELETE',
   })
 }
+/**
+ * 新增合作商
+ * @param {*} data 
+ * @returns 
+ */
+export const addPartnerApi =(data)=>{
+  return request({
+    url:'/user-service/partner',
+    method: 'POST',
+    data
+  })
+}
+/**
+ * 重置密码
+ * @param {*} id 
+ * @returns 
+ */
+export const resetPwdApi=(id)=>{
+  return request({
+    url:`/user-service/partner/resetPwd/${id}`,
+    method: 'PUT',
+  })
+}
+/**
+ * 删除
+ * @param {*} id 
+ * @returns 
+ */
+export const delPartnerApi=(id)=>{
+  return request ({
+    url:`/user-service/partner/${id}`,
+    method: 'DELETE',
+  })
+}
+/**
+ * 修改合作商
+ * @param {*} id 
+ * @returns 
+ */
+export const changePartnerApi=(data,id)=>{
+  return request({
+    url:`/user-service/partner/${id}`,
+    method:'PUT',
+    data
+  })
+}
