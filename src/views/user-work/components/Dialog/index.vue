@@ -173,9 +173,12 @@ export default {
   background: #f3f6fb;
   padding: 10px;
   padding-right: 50px;
+  white-space: nowrap;
+  overflow: hidden;
   .up {
     display: flex;
     justify-content: space-between;
+    // width: 100%;
   }
 }
 </style>
