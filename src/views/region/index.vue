@@ -4,7 +4,7 @@
       <el-card class="box-card">
         <div class="box-head">
           <p>区域搜索:</p>
-          <el-input v-model="input" class="input" placeholder="请输入内容" />
+          <el-input @change='search' v-model="input" class="input" placeholder="请输入内容" />
           <DkdButton @click="search">
             <span>
               <svg-icon
@@ -98,7 +98,7 @@ export default {
       list: {}, // 区域列表数据
       datalist: {
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: 20,
         name: "",
       }, // 请求接口data
       gridData: [], // 详情框数据

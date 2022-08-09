@@ -81,7 +81,7 @@
                   maxlength="15"
                 />
               </el-form-item>
-              <el-form-item label="城北街道">
+              <el-form-item label="备注说明">
                 <el-input
                   v-model="changeList.remark"
                   type="textarea"
