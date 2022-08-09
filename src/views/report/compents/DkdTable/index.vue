@@ -1,5 +1,6 @@
 <template>
   <el-table
+    v-loading="loading"
     :data="currentList"
     style="width: 1158px"
     :header-cell-style="{
@@ -38,10 +39,14 @@ export default {
       type: Array,
       default: () => [],
     },
-    currentIndex: {
-      type: Number,
+    loading: {
+      type: Boolean,
       required: true,
     },
+    // currentIndex: {
+    //   type: Number,
+    //   required: true,
+    // },
   },
   created() {},
 

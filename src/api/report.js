@@ -28,3 +28,14 @@ export function getPartnerCollect(data) {
     params: data,
   });
 }
+
+// 获取合作商名称
+export function getPartnerSearch() {
+  return request({
+    url: "/user-service/partner/search",
+    params: {
+      pageIndex: 1,
+      pageSize: 100000
+    },
+  });
+}

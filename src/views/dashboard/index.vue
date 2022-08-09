@@ -277,7 +277,6 @@ export default {
     async getnodeCollect() {
       const res = await getnodeCollect();
       this.nodeCollect = res.data;
-      console.log(res.data);
       this.myPieChart();
     },
     // top排行
