@@ -36,8 +36,7 @@
                 <div class="home-user-task-stats">
                   <p>{{ operationInfo.workerCount || 0 }}</p>
                   <div class="text-color2">
-                    <p>运营人员数</p>
-                    （个）
+                    <p>运营人员数（个）</p>
                   </div>
                 </div></el-col
               >
