@@ -11,6 +11,31 @@ export function getVmList(params) {
 }
 
 /**
+ * 修改售货机点位
+ * @param {*} id 售货机id
+ * @param {*} nodeId 点位id
+ * @returns
+ */
+export function updateVmNode(id, nodeId) {
+  return request({
+    url: `/vm-service/vm/${id}/${nodeId}`,
+    method: "PUT",
+  });
+}
+
+/**
+ * 点位搜索
+ * @param {*} params pageSize
+ * @returns promise
+ */
+export function searchNode(params) {
+  return request({
+    url: "/vm-service/node/search",
+    params,
+  });
+}
+
+/**
  * 获取售货机商品销量
  * @param {Object} params vmType nodeId createUserId
  * @returns promise
@@ -68,5 +93,67 @@ export function getSupplyCount(innerCode, start, end) {
 export function getRepairCount(innerCode, start, end) {
   return request({
     url: `/task-service/task/repairCount/${innerCode}/${start}/${end}`,
+  });
+}
+
+/**
+ * 应用策略
+ * @param {*} data innerCodeList policyId
+ * @returns promise
+ */
+export function applyPolicy(data) {
+  return request({
+    url: "/vm-service/vm/applyPolicy",
+    method: "PUT",
+    data,
+  });
+}
+
+/**
+ * 取消策略
+ * @param {*} innerCode 售货机编号
+ * @param {*} policyId 策略Id
+ * @returns
+ */
+export function cancelPolicy(innerCode, policyId) {
+  return request({
+    url: `/vm-service/vm/cancelPolicy/${innerCode}/${policyId}`,
+    method: "PUT",
+  });
+}
+
+/**
+ * 查询售货机策略
+ * @param {*} innerCode 售货机id
+ * @returns promise
+ */
+export function selectPolicy(innerCode) {
+  return request({
+    url: `/vm-service/policy/vmPolicy/${innerCode}`,
+  });
+}
+
+/**
+ * 策略搜索
+ * @param {*} params pageSize
+ * @returns promise
+ */
+export function searchPolicy(params) {
+  return request({
+    url: "/vm-service/policy/search",
+    params,
+  });
+}
+
+/**
+ * 新增售货机
+ * @param {*} data vmType nodeId createUserId
+ * @returns promise
+ */
+export function addVmType(data) {
+  return request({
+    url: "/vm-service/vm",
+    method: "POST",
+    data,
   });
 }
