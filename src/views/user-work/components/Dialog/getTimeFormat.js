@@ -7,4 +7,6 @@ export default {
   monthE: dayjs(new Date()).endOf("month").format("YYYY-MM-DD 23:59:59"),
   weekS: dayjs(new Date()).startOf("week").format("YYYY-MM-DD 00:00:00"),
   weekE: dayjs(new Date()).endOf("week").format("YYYY-MM-DD 23:59:59"),
+  dayS: dayjs(new Date()).startOf("date").format("YYYY-MM-DD 00:00:00"),
+  dayE: dayjs(new Date()).startOf("date").format("YYYY-MM-DD 23:59:59"),
 };

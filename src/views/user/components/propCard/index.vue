@@ -21,7 +21,7 @@
         >
         </el-input>
       </el-form-item>
-      <el-form-item label="角色" prop="regionId">
+      <el-form-item label="角色" prop="roleId">
         <el-select
           placeholder="请选择角色"
           style="width: 96%"
@@ -124,9 +124,7 @@ export default {
         userName: [
           { required: true, message: "请输入人员名称", trigger: "blur" },
         ],
-        roleId: [
-          { required: true, message: "请输入角色名称", trigger: "blur" },
-        ],
+        roleId: [{ required: true, message: "请选择角色", trigger: "blur" }],
         mobile: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           {
@@ -141,7 +139,7 @@ export default {
 
         image: [{ required: true, message: "请上传头像文件", trigger: "blur" }],
         status: [
-          { required: true, message: "请输入角色名称", trigger: "blur" },
+          { required: true, message: "请选择是否启用", trigger: "blur" },
         ],
       },
       // regionId:''

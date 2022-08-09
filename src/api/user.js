@@ -146,3 +146,14 @@ export const getTaskCountAPI = (queryInfo) =>
     url: "/task-service/task/userWork",
     params: queryInfo,
   });
+
+/**
+ *获取当时工单汇总信息(人员统计头部信息)
+ * @param {String} startTime  开始时间
+ * @param {String} endTime    结束时间
+ * @returns promise
+ */
+export const getStaffCountAPI = (start, end) =>
+  request({
+    url: `/task-service/task/taskReportInfo/${start}/${end}`,
+  });

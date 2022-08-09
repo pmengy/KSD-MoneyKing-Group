@@ -155,7 +155,7 @@ export default {
     flex-direction: column;
     .taskLis {
       margin-top: 30px;
-      width: 580px;
+      width: 90%;
       border-radius: 10px;
       .el-table--scrollable-x .el-table__body-wrapper {
         overflow-x: clip !important;
@@ -167,7 +167,7 @@ export default {
   }
 }
 .staffInfo {
-  width: 579px;
+  width: 90%;
   height: 86px;
   padding: 19px 19px 0;
   background: #f3f6fb;
