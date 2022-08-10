@@ -218,6 +218,7 @@ export default {
       },
       option: {
         legend: {},
+        tooltip: {},
         toolbox: {
           show: true,
           feature: {
@@ -229,38 +230,7 @@ export default {
         },
         dataset: {
           dimensions: ["collectDate", "cancelCount", "finishCount"],
-          source: [
-            {
-              collectDate: "2022-1-1",
-              cancelCount: 43.3,
-              finishCount: 85.8,
-            },
-            {
-              collectDate: "2022-1-2",
-              cancelCount: 83.1,
-              finishCount: 73.4,
-            },
-            {
-              collectDate: "2022-1-3",
-              cancelCount: 86.4,
-              finishCount: 65.2,
-            },
-            {
-              collectDate: "2022-1-4",
-              cancelCount: 72.4,
-              finishCount: 53.9,
-            },
-            {
-              collectDate: "2012-1-4",
-              cancelCount: 72.4,
-              finishCount: 53.9,
-            },
-            {
-              collectDate: "2012-9-4",
-              cancelCount: 70.4,
-              finishCount: 53.9,
-            },
-          ],
+          source: [],
         },
         xAxis: { type: "category" },
 
@@ -271,8 +241,8 @@ export default {
         // Declare several bar series, each will be mapped
         // to a column of dataset.source by default.
         series: [
-          { type: "bar", color: "red" },
-          { type: "bar", color: "skyblue" },
+          { type: "bar", color: "red", name: "取消工单" },
+          { type: "bar", color: "skyblue", name: "完成工单" },
         ],
       },
       workStatusList: [], //工单状态
