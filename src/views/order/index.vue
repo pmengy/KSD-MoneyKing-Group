@@ -16,7 +16,6 @@
           </el-form-item>
           <el-form-item label="工单状态:" class="item">
             <el-date-picker
-              v-model="value1"
               type="daterange"
               range-separator="~"
               start-placeholder="开始日期"
@@ -38,12 +37,75 @@
         </el-form>
       </el-card>
       <!-- 列表栏 -->
+      <!-- 查看详情组件 -->
+      <el-dialog
+        title="工单详情"
+        @compile="seeInfo"
+        :visible.sync="dialogVisibleIn"
+        width="630px"
+        custom-class="el-dialog1"
+      >
+        <div class="body">
+          <div class="body-top">
+            <img src="../../assets/images/cancel.png" alt="" class="img1" />
+            <span>取消</span>
+            <img src="../../assets/images/cancel1.png" alt="" class="img2" />
+          </div>
+          <el-form :props="DetailsFrom">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="订单编号:">
+                  <span>{{ DetailsFrom.orderNo }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="设备编号:">
+                  <span>{{ DetailsFrom.createType }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="创建时间:">
+                  <span>{{ DetailsFrom.updateTime }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="完成时间:">
+                  <span>{{ DetailsFrom.createTime }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="商品名称:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="订单金额:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="设备地址:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="支付方式:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-dialog>
+      <!-- /查看详情组件 -->
       <el-card class="box-search" shadow="never">
         <!-- 表格 -->
-        <dkd-table
+        <DkdTable
           :currentList="currentList"
           :tableLabel="tableLabel"
           :currentIndex="pageIndex * 10"
+          :visible.sync="dialogVisible"
+          @compile="seeInfo"
         />
         <!-- 分页 -->
         <div class="Pagination">
@@ -72,32 +134,35 @@
 </template>
 
 <script>
-import { getOrderStatus,getTaskStatus } from "@/api/order";
+import { getOrderStatus } from "@/api/order";
+import { getTaskStatus,getStateDetail } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
-import DkdTable from "@/components/DkdTable";
+import DkdTable from "./components/index.vue";
 
 export default {
   data() {
     return {
+      size: "",
+      dialogVisibleIn: false,
+      dialogVisible: false,
       formInline: {
-        taskCode: "",
+        innerCode: "",
         status: "",
       },
+      visit: false,
+      value:'',
       currentList: [],
       taskStatusList: [],
+      DetailsFrom:[],
       pageIndex: "",
       totalPage: "",
       totalCount: "",
       tableLabel: [
         { label: "订单编号", width: "118", prop: "innerCode" },
-        { label: "商品名称", width: "130", prop: "skuName" },
-        { label: "订单金额(元)", width: "136", prop: "amount" },
-        { label: "设备编号", width: "130", prop: "createType" },
-        {
-          label: "订单状态",
-          width: "136",
-          prop: "status",
-        },
+        { label: "商品名称", width: "150", prop: "skuName" },
+        { label: "订单金额 (元)", width: "150", prop: "amount" },
+        { label: "设备编号", width: "150", prop: "createType" },
+        { label: "订单状态", width: "150", prop: "status" },
         { label: "创建日期", width: "160", prop: "createTime" },
       ],
     };
@@ -105,14 +170,31 @@ export default {
   components: { DkdButton, DkdTable },
   created() {
     this.getTaskStatus();
-    this.getOrderStatus()
+    this.getOrderStatus();
   },
 
   methods: {
     // 获取全部工单列表
     async getOrderStatus(params) {
       const res = await getOrderStatus(params);
+      // console.log(res.currentPageRecords);
       console.log(res);
+      res.data.currentPageRecords.forEach((item) => {
+        if (item.status === 0) {
+          item.status = "创建";
+        }
+        if (item.status === 1) {
+          item.status = "支付成功";
+        }
+        if (item.status === 2) {
+          item.status = "出货成功";
+        }
+        if (item.status === 3) {
+          item.status = "出货失败";
+        }
+      });
+
+      // console.log(res);
       this.currentList = res.data.currentPageRecords;
       this.pageIndex = res.data.pageIndex;
       this.totalPage = res.data.totalPage;
@@ -124,25 +206,33 @@ export default {
       console.log(res);
       this.taskStatusList = res.data;
     },
-    // 获取下一页数据
-    async nextPage() {
-      await this.searchTasks({
-        pageIndex: parseInt(this.pageIndex) + 1,
-        taskCode: this.formInline.taskCode,
-        status: this.formInline.status,
-      });
+    async getStateDetail(){
+      try {
+        const {data}=await getStateDetail(id)
+        this.DetailsFrom=data
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+
     },
     // 获取下一页数据
+    async nextPage() {
+      await this.getOrderStatus(parseInt(this.pageIndex) + 1);
+    },
+    // searchTasks
     async lastPage() {
-      await this.searchTasks({
-        pageIndex: parseInt(this.pageIndex) - 1,
-        taskCode: this.formInline.taskCode,
-        status: this.formInline.status,
-      });
+      await this.getOrderStatus(parseInt(this.pageIndex) - 1);
     },
     // 搜索工单
     async search() {
-      await this.searchTasks(this.formInline);
+      await getOrderStatus(this.formInline);
+    },
+    seeInfo(val) {
+      this.dialogVisibleIn = true;
+      this.val=val;
+      console.log(this.val);
+      console.log(val);
     },
   },
 };
@@ -162,6 +252,25 @@ export default {
   }
   .el-button--primary {
     background-color: #5f84ff;
+  }
+}
+.body {
+  word-break: break-all;
+  .body-top {
+    margin-top: 0;
+    background-color: grey;
+    margin-bottom: 30px;
+    .img1 {
+      margin-left: 22px;
+    }
+    .img2 {
+      margin-right: 76px;
+      margin-bottom: 7px;
+    }
+    span{
+      width: 350px;
+      height: 16px;
+    }
   }
 }
 .Pagination {
