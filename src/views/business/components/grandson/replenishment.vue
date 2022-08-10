@@ -64,7 +64,7 @@ export default {
     handleClose() {
       this.$emit("onClose");
     },
-    // 获取列表
+    // 获取补货列表
     async NewtableList(id) {
       //   const res = await getThemachineApi(id);
       console.log(id);

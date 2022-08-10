@@ -238,15 +238,17 @@ export default {
     // 显示详情
     details(val) {
       this.StateVisible = true;
-      console.log(val);
+      // console.log(val);
+      this.$refs.State.StatedetaList(val)
     },
     // 关闭详情
     onCloseState() {
       this.StateVisible = false;
     },
     // 修改详情中表单
-    gameclock() {
+    gameclock(val) {
       this.NewtableVisible = true;
+      this.$refs.Newtable.GetstateInfo(val)
     },
   },
 };

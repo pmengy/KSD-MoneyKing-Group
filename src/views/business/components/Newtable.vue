@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { getpersonnelfillApi } from "@/api/index";
+import { getpersonnelfillApi, getbuildworkApi } from "@/api/index";
 import RePlen from "./grandson/replenishment";
 export default {
   name: "userPropCard",
@@ -137,8 +137,8 @@ export default {
     // 新增表单
     async onClose() {
       await this.$refs.form.validate();
-      // await postStrategyApiF(this.staffInfo);
-      // this.$emit("Acharm");
+      await getbuildworkApi(this.staffInfo);
+      this.handleClose();
     },
     // 获取人员数据列表
     async getpersonnelfillApi() {
@@ -153,7 +153,7 @@ export default {
         });
       }
     },
-    // 补货
+    // 效验展示补货
     async replenishment() {
       this.$refs.form.validateField("innerCode", (errorMessage) => {
         if (!errorMessage) {
@@ -179,11 +179,9 @@ export default {
       };
     },
     // // 获取商品类型列表
-    // async getRoleId() {
-    //   const { data } = await getStrategyApi();
-    //   this.roleNameList = data.currentPageRecords;
-    //   console.log("商品类型", this.roleNameList);
-    // },
+    GetstateInfo(val) {
+      this.staffInfo = val;
+    },
   },
 };
 </script>

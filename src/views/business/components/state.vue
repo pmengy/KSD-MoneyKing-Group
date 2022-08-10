@@ -49,23 +49,23 @@
       </div>
       <el-row class="rowrez">
         <el-col :span="12"
-          ><div>设备编号： <span>{{}}</span></div></el-col
+          ><div>设备编号： <span>{{stateInfo.innerCode}}</span></div></el-col
         >
         <el-col :span="12"
-          ><div>创建日期： <span>{{}}</span></div></el-col
-        >
-      </el-row>
-      <el-row class="rowrez">
-        <el-col :span="12"
-          ><div>取消日期： <span>{{}}</span></div></el-col
-        >
-        <el-col :span="12"
-          ><div>运营人员： <span>{{}}</span></div></el-col
+          ><div>创建日期： <span>{{stateInfo.createTime}}</span></div></el-col
         >
       </el-row>
       <el-row class="rowrez">
         <el-col :span="12"
-          ><div>工单类型： <span>{{}}</span></div></el-col
+          ><div>取消日期： <span>{{stateInfo.updateTime}}</span></div></el-col
+        >
+        <el-col :span="12"
+          ><div>运营人员： <span>{{stateInfo.userName}}</span></div></el-col
+        >
+      </el-row>
+      <el-row class="rowrez">
+        <el-col :span="12"
+          ><div>工单类型： <span>{{stateInfo.taskType.typeName}}</span></div></el-col
         >
         <el-col :span="12"
           ><div>
@@ -81,10 +81,10 @@
       </el-row>
       <el-row class="rowrez">
         <el-col :span="12"
-          ><div>工单方式： <span>{{}}</span></div></el-col
+          ><div>工单方式： <span>手动</span></div></el-col
         >
         <el-col :span="12"
-          ><div>取消原因： <span>{{}}</span></div></el-col
+          ><div>取消原因： <span></span></div></el-col
         >
       </el-row>
 
@@ -109,7 +109,7 @@ export default {
       // 详情数据
       stateInfo: {},
       stateId: "", // 当前id
-      RRePlenVisible: false,
+      RRePlenVisible: false, //控制补货弹框
       personnelList: [],
       // 孙子表单
       tableLabel: [
@@ -136,7 +136,7 @@ export default {
     // 跳转表单
     handleClosee() {
       this.$emit("onClose");
-      this.$emit("gameclock");
+      this.$emit("gameclock",this.stateInfo);
     },
     // 关闭补货
     onClosereP() {
@@ -145,6 +145,11 @@ export default {
     // 展示补货详情
     async replenishment() {
       this.RRePlenVisible = true;
+    },
+    // 获取详情数据
+    StatedetaList(val) {
+      this.stateInfo = val;
+      console.log(this.stateInfo);
     },
   },
 };
@@ -202,6 +207,6 @@ export default {
 .rowrez {
   padding-bottom: 20px;
   padding-left: 30px;
-  font-size: 20px;
+  font-size: 15px;
 }
 </style>
