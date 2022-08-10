@@ -61,9 +61,10 @@
             name="code"
             tabindex="3"
             auto-complete="on"
+            @change="login"
           />
           <div class="code_right" @click="changeImageCode">
-            <img src="" alt="" ref='img' />
+            <img src="" alt="" ref="img" />
           </div>
         </div>
       </el-form-item>
@@ -134,7 +135,7 @@ export default {
     // 获取验证码
     async getImageCode() {
       const res = await getImageCode(this.loginForm.clientToken);
-      this.$refs.img.src=res.request.responseURL
+      this.$refs.img.src = res.request.responseURL;
     },
     // 生成随机数
     getNum() {
@@ -224,6 +225,8 @@ export default {
       try {
         this.loading = true;
         await this.$refs.loginForm.validate();
+        // 触发  存下登录时候的信息
+        this.$store.dispatch("user/getLoginForm", this.loginForm);
         this.$store.dispatch("user/getToken", this.loginForm);
       } catch (err) {
         console.log(err);

@@ -43,7 +43,6 @@
         <div class="list-top-btn">
           <dkd-button
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
-            @click="openMask"
           >
             <span>
               <svg-icon
@@ -53,79 +52,6 @@
               >新建</span
             >
           </dkd-button>
-          <!-- 弹窗 -->
-          <!-- 新建工单的弹层 -->
-          <el-dialog
-            title="新增工单"
-            :visible.sync="dialogFormVisible"
-            :dialogFormVisible="dialogFormVisible"
-            width="40%"
-          >
-            <el-form ref="form" label-width="100px">
-              <!-- 设备编号 -->
-              <el-form-item label="设备编号:">
-                <el-input placeholder="请输入"></el-input>
-              </el-form-item>
-              <!-- 工单类型 -->
-              <el-form-item label="工单类型:">
-                <el-select style="width: 100%" placeholder="请选择活动区域">
-                  <el-option label="区域一"></el-option>
-                </el-select>
-              </el-form-item>
-              <!-- 补货数量 -->
-              <el-row :gutter="20" type="flex" justify="space-around">
-                <el-col :span="9">
-                  <div class="elclo">
-                    补货数量：
-                    <span class="el-icon-document" @click="innerVisible = true"
-                      >补货清单</span
-                    >
-                  </div>
-                </el-col>
-                <el-col :span="10"></el-col>
-              </el-row>
-              <el-form-item label="运营人员：">
-                <el-select style="width: 100%" placeholder="请选择活动区域">
-                  <el-option label="区域一"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="备注：">
-                <el-input
-                  style="width: 100%"
-                  placeholder="1-300个字符"
-                  type="textarea"
-                  :rows="3"
-                />
-              </el-form-item>
-            </el-form>
-            <el-dialog
-              width="40%"
-              title="补货清单"
-              :visible.sync="innerVisible"
-              append-to-body
-            >
-              <el-table>
-                <el-table-column
-                  property="date"
-                  label="日期"
-                  width="150"
-                ></el-table-column>
-                <el-table-column
-                  property="name"
-                  label="姓名"
-                  width="200"
-                ></el-table-column>
-                <el-table-column
-                  property="address"
-                  label="地址"
-                ></el-table-column>
-              </el-table>
-            </el-dialog>
-            <span slot="footer" class="dialog-footer">
-              <el-button>取 消</el-button>
-              <el-button type="primary">确 定</el-button>
-            </span>
-          </el-dialog>
         </div>
         <!-- 表格 -->
         <dkd-table
@@ -160,10 +86,9 @@
 </template>
 
 <script>
-import { searchTasks, getTaskStatus} from "@/api/task";
+import { searchTasks, getTaskStatus } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "@/components/DkdTable";
-// import Newlybuilt from "./components/Newlybuilt.vue";
 
 export default {
   data() {
@@ -213,10 +138,7 @@ export default {
   methods: {
     // 获取全部工单列表
     async searchTasks(params) {
-      const res = await searchTasks({
-        params,
-        isRepair: false,
-      });
+      const res = await searchTasks(params);
       console.log(res);
       this.currentList = res.data.currentPageRecords;
       this.pageIndex = res.data.pageIndex;
@@ -228,7 +150,6 @@ export default {
       const res = await getTaskStatus();
       this.taskStatusList = res.data;
     },
-    
     // 获取下一页数据
     async nextPage() {
       await this.searchTasks({
@@ -248,14 +169,6 @@ export default {
     // 搜索工单
     async search() {
       await this.searchTasks(this.formInline);
-    },
-    openMask() {
-      this.dialogFormVisible = true;
-      console.log(111);
-    },
-    confirm() {
-      console.log(2222);
-      this.dialogFormVisible = false;
     },
   },
 };

@@ -12,7 +12,7 @@
           <dkd-button
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
           >
-            <span @click="dialogFormVisible = true">
+            <span @click="addx">
               <svg-icon
                 icon-class="add"
                 style="margin-right: 8px; font-size: 15px"
@@ -55,7 +55,7 @@
     <!-- 新建弹窗 -->
     <el-dialog :title="Textted" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="活动名称" label-width="150px" class="formm">
+        <el-form-item label="商品类型名称" label-width="150px" class="formm">
           <el-input
             size="large"
             type="text"
@@ -151,7 +151,7 @@ export default {
       }
     },
     // 修改时弹框
-    async showcompile(id) {
+    showcompile(id) {
       console.log(id);
       this.add_X = false;
       this.Xg = id;
@@ -196,6 +196,10 @@ export default {
           });
         });
       } catch (e) {}
+    },
+    addx() {
+      this.dialogFormVisible = true;
+      this.add_X = true;
     },
   },
 };

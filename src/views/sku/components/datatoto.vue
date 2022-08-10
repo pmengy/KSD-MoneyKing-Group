@@ -1,133 +1,129 @@
 <template>
-  <el-dialog :title="activeTitle" :visible="Visible" width="60%">
-    <!-- :before-close="handleClose" -->
+  <el-dialog
+    :title="activeTitle"
+    :visible="Visible"
+    :before-close="handleClose"
+    width="60%"
+  >
     <el-form
       ref="form"
       label-width="100px"
       :model="staffInfo"
       :rules="staffInfoRules"
     >
-      <el-form-item label="人员名称" prop="userName">
+      <el-form-item label="商品名称" prop="skuName">
         <el-input
-          placeholder="请输入人员名称"
-          maxlength="10"
+          placeholder="请输入商品名称"
+          maxlength="15"
           show-word-limit
           style="width: 96%"
-          v-model="staffInfo.userName"
+          v-model="staffInfo.skuName"
         >
         </el-input>
       </el-form-item>
-      <el-form-item label="角色" prop="regionId">
-        <el-select
-          placeholder="请选择角色"
-          style="width: 96%"
-          v-model="roleName"
-        >
-          <el-option
-            :value="item.roleName"
-            v-for="item in roleNameList"
-            :key="item.roleId"
-            >{{ item.roleName }}</el-option
-          >
-        </el-select>
-      </el-form-item>
-      <el-form-item label="联系电话" prop="mobile">
+      <el-form-item label="品牌" prop="brandName">
         <el-input
-          placeholder="请输入联系电话"
+          placeholder="请输入品牌名称"
+          maxlength="10"
+          show-word-limit
+          style="width: 96%"
+          v-model="staffInfo.brandName"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item label="商品价格" prop="price">
+        <el-input
+          placeholder="请输入"
           style="width: 96%"
           maxlength="11"
           show-word-limit
-          v-model="staffInfo.mobile"
+          v-model="staffInfo.price"
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="负责区域" prop="regionName">
+      <el-form-item label="商品类型" prop="regionName">
         <el-select
           placeholder="请选择"
           style="width: 96%"
-          v-model="staffInfo.regionName"
+          v-model="staffInfo.classId"
         >
           <el-option
-            :value="item.name"
-            v-for="item in regionNameList"
-            :key="item.id"
-            >{{ item.name }}</el-option
+            :value="item.classId"
+            :label="item.className"
+            v-for="item in roleNameList"
+            :key="item.classId"
+            >{{ item.className }}</el-option
           >
         </el-select>
       </el-form-item>
-      <el-form-item label="头像" prop="image">
+      <el-form-item label="规格" prop="unit">
+        <el-input
+          placeholder="请输入"
+          maxlength="10"
+          show-word-limit
+          style="width: 96%"
+          v-model="staffInfo.unit"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item label="头像" prop="skuImage">
         <el-upload
           class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
           :show-file-list="false"
+          :before-upload="beforeAvatarUpload"
+          :on-success="handleAvatarSuccess"
           accept="image.jpg/png"
         >
-          <!-- :before-upload="beforeAvatarUpload" -->
-          <!-- :on-success="handleAvatarSuccess" -->
           <div class="el-upload__tip" slot="tip">
             只能上传jpeg/png文件,且不超过2000kb
           </div>
-          <img v-if="staffInfo.image" :src="staffInfo.image" class="avatar" />
+          <img
+            v-if="staffInfo.skuImage"
+            :src="staffInfo.skuImage"
+            class="avatar"
+          />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-checkbox-group v-model="staffInfo.status">
-          <el-checkbox label="是否启用" name="type"></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
     </el-form>
-
     <span slot="footer" class="dialog-footer">
-      <el-button>取 消</el-button>
-      <el-button type="primary">确 定</el-button>
+      <el-button @click="handleClose">取 消</el-button>
+      <el-button @click="onClose" type="primary">确 定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-// import { getRoleIdAPI, getRegionListAPI, getImageUrlAPI } from "@/api/user";
+import {
+  getStrategyApi,
+  getimgApi,
+  postStrategyApiF,
+  postStrategyApiFF,
+} from "@/api/index";
 export default {
   name: "userPropCard",
   data() {
     return {
       //   isShow: true, //控制是否展示弹出层
-      activeTitle: "新增人员",
       staffInfo: {
-        //新增人员信息存储对象
-        userName: "", //用户名
-        roleId: "", //角色id
-        mobile: "", //手机号
-        regionId: "", //所属区域id
-        regionName: "", //所属区域名称
-        status: "", //是否启用状态
-        image: "", //头像url
+        skuName: "", //商品名称
+        brandName: "", //品牌
+        price: "", //商品价格
+        classId: "", //商品类型
+        unit: "", // 规格
+        skuImage: "", //头像url
       },
-      roleName: "", //选择的角色名
-      regionUserName: "", //角色名称
-      roleNameList: [], //存储查询返回的角色名称
-      regionNameList: [], //存储查询返回的区域名称
+      dataId: "", // 修改id
+      roleNameList: [], //商品类型列表
       staffInfoRules: {
         //整个表单的校验规则
-        userName: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        roleId: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        mobile: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        regionId: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        regionName: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        status: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-        ],
-        image: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
+        skuName: [{ required: true, message: "请输入", trigger: "blur" }],
+        brandName: [{ required: true, message: "请输入", trigger: "blur" }],
+        price: [{ required: true, message: "请输入", trigger: "blur" }],
+        classId: [{ required: true, message: "请输入", trigger: "blur" }],
+        unit: [{ required: true, message: "请输入", trigger: "blur" }],
+        skuImage: [{ required: true, message: "请输入", trigger: "blur" }],
       },
     };
   },
@@ -136,72 +132,92 @@ export default {
       type: Boolean, //
       required: true, //
     },
+    // 判断添加还是修改
+    Datastate: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   created() {
-    // this.getRoleId();
-    // this.getRegionList();
+    this.getRoleId();
+  },
+  computed: {
+    activeTitle() {
+      return this.Datastate ? "添加商品" : "修改商品";
+    },
   },
 
-  // watch: {
-  //   // 监视选择的角色名，将角色id分别赋值
-  //   roleName(newVal, oldVal) {
-  //     console.log(newVal);
-  //     if (newVal == "运营员") {
-  //       this.staffInfo.roleId = 2;
-  //     } else {
-  //       this.staffInfo.roleId = 3;
-  //     }
-  //   },
-  // },
+  watch: {},
 
-  // methods: {
-  //   async handleAvatarSuccess(res, file) {
-  //     // console.log(res);
-  //     // console.log(file);
-  //     // const imgFile = URL.createObjectURL(file.raw);
-  //     const formData = new FormData();
-  //     formData.append("imgFile", file.raw);
-  //     console.log(formData);
-  //     const data = await getImageUrlAPI(file.raw);
-  //     // const data2 = await getImageUrlAPI(imgFile);
-  //     console.log(data);
-  //     // console.log(data2);
-  //     // this.staffInfo.image = URL.createObjectURL(file.raw);
-  //   },
-  //   beforeAvatarUpload(file) {
-  //     const isJPEG = file.type === "image/jpeg";
-  //     // const isJPG = file.type === "image/jpg";
-  //     // const isPNG = file.type === "image/png";
-  //     const isLt2M = file.size / 1024 / 1024 < 2;
+  methods: {
+    // 图片处理
+    async handleAvatarSuccess(res, file) {
+      console.log(file);
+      const formData = new FormData();
+      formData.append("fileName", file.raw);
+      console.log(formData);
+      const { data } = await getimgApi(formData);
+      this.staffInfo.skuImage = data;
+    },
+    // 图片判定
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
 
-  //     if (!isJPEG) {
-  //       // this.$message.error("上传头像图片只能是 jpeg/JPG/png 格式!");
-  //       this.$message.error("上传头像图片只能是 jpeg 格式!");
-  //     }
-  //     if (!isLt2M) {
-  //       this.$message.error("上传头像图片大小不能超过 2MB!");
-  //     }
-  //     return isJPEG && isLt2M;
-  //   },
-  //   // 右上方关闭按钮
-  //   handleClose(done) {
-  //     this.$emit("onClose");
-  //   },
-  //   // 获取角色列表
-  //   async getRoleId() {
-  //     const { data } = await getRoleIdAPI();
-  //     this.roleNameList = data;
-  //   },
-  //   // 获取区域列表
-  //   async getRegionList() {
-  //     const { data } = await getRegionListAPI({ pageSize: 20 });
-  //     this.regionNameList = data.currentPageRecords;
-  //   },
-  //   canCel() {
-  //     this.$emit("onClose");
-  //   },
-  // },
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+
+    // 新增上传/修改
+    async onClose() {
+      // 效验表单
+      await this.$refs.form.validate();
+      // 新增
+      if (this.Datastate) {
+        await postStrategyApiF(this.staffInfo);
+        this.$emit("Acharm");
+      } else {
+        await postStrategyApiFF(this.staffInfo, this.dataId);
+        this.$emit("Bcharm");
+      }
+    },
+    // 右上方关闭按钮/取消按钮
+    handleClose() {
+      this.$emit("onClose");
+      this.staffInfo = {
+        skuName: "", //商品名称
+        brandName: "", //品牌
+        price: "", //商品价格
+        classId: "", //商品类型id
+        unit: "", // 规格
+        skuImage: "", //头像url
+      };
+    },
+    // 获取商品类型列表
+    async getRoleId() {
+      const { data } = await getStrategyApi();
+      this.roleNameList = data.currentPageRecords;
+      console.log("商品类型", this.roleNameList);
+    },
+    // 编辑回显
+    async getDeptByval(val) {
+      this.staffInfo = {
+        skuName: val.skuName, //商品名称
+        brandName: val.brandName, //品牌
+        price: val.price, //商品价格
+        classId: val.classId, //商品类型
+        unit: val.unit, // 规格
+        skuImage: val.skuImage, //头像url
+      };
+      this.dataId = val.skuId;
+    },
+  },
 };
 </script>
 
