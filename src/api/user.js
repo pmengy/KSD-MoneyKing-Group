@@ -157,3 +157,14 @@ export const getStaffCountAPI = (start, end) =>
   request({
     url: `/task-service/task/taskReportInfo/${start}/${end}`,
   });
+
+/**
+ * 工单状态统计
+ * @param {String} start  开始查询时间
+ * @param {String} end   结束查询时间
+ @returns promise
+ */
+export const getWorkStatusCountAPI = (start, end) =>
+  request({
+    url: `/task-service/task/collectReport/${start}/${end}`,
+  });
