@@ -94,7 +94,9 @@
 <script>
 import { searchTasks, getTaskStatus } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
-import DkdTable from "@/components/DkdTable";
+import DkdTable from "./components/Theform.vue";
+import State from "./components/state.vue";
+import Newtable from "./components/Newtable.vue";
 
 export default {
   data() {
