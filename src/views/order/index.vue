@@ -37,12 +37,75 @@
         </el-form>
       </el-card>
       <!-- 列表栏 -->
+      <!-- 查看详情组件 -->
+      <el-dialog
+        title="工单详情"
+        @compile="seeInfo"
+        :visible.sync="dialogVisibleIn"
+        width="630px"
+        custom-class="el-dialog1"
+      >
+        <div class="body">
+          <div class="body-top">
+            <img src="../../assets/images/cancel.png" alt="" class="img1" />
+            <span>取消</span>
+            <img src="../../assets/images/cancel1.png" alt="" class="img2" />
+          </div>
+          <el-form :props="DetailsFrom">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="订单编号:">
+                  <span>{{ DetailsFrom.orderNo }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="设备编号:">
+                  <span>{{ DetailsFrom.createType }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="创建时间:">
+                  <span>{{ DetailsFrom.updateTime }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="完成时间:">
+                  <span>{{ DetailsFrom.createTime }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="商品名称:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="订单金额:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="设备地址:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="支付方式:">
+                  <span>{{ DetailsFrom.status }}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
+      </el-dialog>
+      <!-- /查看详情组件 -->
       <el-card class="box-search" shadow="never">
         <!-- 表格 -->
-        <dkd-table
+        <DkdTable
           :currentList="currentList"
           :tableLabel="tableLabel"
           :currentIndex="pageIndex * 10"
+          :visible.sync="dialogVisible"
+          @compile="seeInfo"
         />
         <!-- 分页 -->
         <div class="Pagination">
@@ -67,25 +130,30 @@
         </div>
       </el-card>
     </div>
-    
   </div>
 </template>
 
 <script>
 import { getOrderStatus } from "@/api/order";
-import { getTaskStatus } from "@/api/task";
+import { getTaskStatus,getStateDetail } from "@/api/task";
 import DkdButton from "@/components/DkdButton";
-import DkdTable from "@/components/DkdTable";
+import DkdTable from "./components/index.vue";
 
 export default {
   data() {
     return {
+      size: "",
+      dialogVisibleIn: false,
+      dialogVisible: false,
       formInline: {
         innerCode: "",
         status: "",
       },
+      visit: false,
+      value:'',
       currentList: [],
       taskStatusList: [],
+      DetailsFrom:[],
       pageIndex: "",
       totalPage: "",
       totalCount: "",
@@ -109,7 +177,7 @@ export default {
     // 获取全部工单列表
     async getOrderStatus(params) {
       const res = await getOrderStatus(params);
-      console.log(res.currentPageRecords);
+      // console.log(res.currentPageRecords);
       console.log(res);
       res.data.currentPageRecords.forEach((item) => {
         if (item.status === 0) {
@@ -120,8 +188,8 @@ export default {
         }
         if (item.status === 2) {
           item.status = "出货成功";
-        } 
-         if (item.status === 3){
+        }
+        if (item.status === 3) {
           item.status = "出货失败";
         }
       });
@@ -138,6 +206,16 @@ export default {
       console.log(res);
       this.taskStatusList = res.data;
     },
+    async getStateDetail(){
+      try {
+        const {data}=await getStateDetail(id)
+        this.DetailsFrom=data
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+
+    },
     // 获取下一页数据
     async nextPage() {
       await this.getOrderStatus(parseInt(this.pageIndex) + 1);
@@ -149,6 +227,12 @@ export default {
     // 搜索工单
     async search() {
       await getOrderStatus(this.formInline);
+    },
+    seeInfo(val) {
+      this.dialogVisibleIn = true;
+      this.val=val;
+      console.log(this.val);
+      console.log(val);
     },
   },
 };
@@ -168,6 +252,25 @@ export default {
   }
   .el-button--primary {
     background-color: #5f84ff;
+  }
+}
+.body {
+  word-break: break-all;
+  .body-top {
+    margin-top: 0;
+    background-color: grey;
+    margin-bottom: 30px;
+    .img1 {
+      margin-left: 22px;
+    }
+    .img2 {
+      margin-right: 76px;
+      margin-bottom: 7px;
+    }
+    span{
+      width: 350px;
+      height: 16px;
+    }
   }
 }
 .Pagination {

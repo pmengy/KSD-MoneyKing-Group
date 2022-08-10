@@ -25,8 +25,8 @@ export function searchTasks(params) {
  * 获取工单详情
  * @returns promise
  */
-export function getStateDetail(taskId) {
+export function getStateDetail(id) {
   return request({
-    url: '/task-service/task/taskInfo' + taskId,
+    url: '/task-service/task/taskInfo' + id,
   });
 }
