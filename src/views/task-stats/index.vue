@@ -94,12 +94,15 @@
               <div class="title-time">
                 <div class="block">
                   <el-date-picker
-                    v-model="value1"
+                    v-model="isSelectTime"
+                    value-format="yyyy-MM-dd"
                     type="daterange"
                     range-separator="~"
                     :clearable="false"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    :unlink-panels="true"
+                    @change="change"
                   >
                   </el-date-picker>
                 </div>
@@ -120,8 +123,9 @@
                 </div>
               </div>
             </div>
+            <div class="chart-workStatus" ref="chartWorkStatus">1231</div>
             <!-- 中间echars -->
-            <div class="boxCenter">
+            <div class="boxCenter" v-if="workStatusList.length == 0">
               <img src="~@/assets/images/nodata.png" alt="" />
             </div></div
         ></el-col>
@@ -178,9 +182,14 @@
 </template>
 
 <script>
-import { getStaffCountAPI, getRegionListAPI } from "@/api/user";
+import {
+  getStaffCountAPI,
+  getRegionListAPI,
+  getWorkStatusCountAPI,
+} from "@/api/user";
 import timeFormat from "../user-work/components/Dialog/getTimeFormat";
 import dayjs from "dayjs";
+
 export default {
   name: "userTaskStats",
   data() {
@@ -191,7 +200,11 @@ export default {
       },
       liActiveClass: 1,
       ActiveClass: 4,
-      value1: [new Date(), new Date()],
+      isSelectTime: [
+        //存储选择的时间
+        dayjs(new Date()).format("YYYY-MM-DD"),
+        dayjs(new Date()).format("YYYY-MM-DD"),
+      ],
       regionList: [], //区域列表
       staffCountList: [], //人员工单汇总信息
       regionQuery: {
@@ -203,34 +216,140 @@ export default {
       form: {
         regionInfo: "",
       },
+      option: {
+        legend: {},
+        toolbox: {
+          show: true,
+          feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ["line", "bar"] },
+            restore: { show: true },
+            saveAsImage: { show: true },
+          },
+        },
+        dataset: {
+          dimensions: ["collectDate", "cancelCount", "finishCount"],
+          source: [
+            {
+              collectDate: "2022-1-1",
+              cancelCount: 43.3,
+              finishCount: 85.8,
+            },
+            {
+              collectDate: "2022-1-2",
+              cancelCount: 83.1,
+              finishCount: 73.4,
+            },
+            {
+              collectDate: "2022-1-3",
+              cancelCount: 86.4,
+              finishCount: 65.2,
+            },
+            {
+              collectDate: "2022-1-4",
+              cancelCount: 72.4,
+              finishCount: 53.9,
+            },
+            {
+              collectDate: "2012-1-4",
+              cancelCount: 72.4,
+              finishCount: 53.9,
+            },
+            {
+              collectDate: "2012-9-4",
+              cancelCount: 70.4,
+              finishCount: 53.9,
+            },
+          ],
+        },
+        xAxis: { type: "category" },
+
+        yAxis: {
+          type: "value",
+          name: "工单量：个",
+        },
+        // Declare several bar series, each will be mapped
+        // to a column of dataset.source by default.
+        series: [
+          { type: "bar", color: "red" },
+          { type: "bar", color: "skyblue" },
+        ],
+      },
+      workStatusList: [], //工单状态
+      dataList: [],
     };
   },
   created() {
     this.init();
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.getEchartData();
+    });
+  },
   computed: {
     yearCurrent() {
       return dayjs(new Date()).startOf("year").$d;
     },
+
     monthCurrent() {
       return dayjs(new Date()).startOf("month").$d;
     },
+
     weekCurrent() {
       return dayjs(new Date()).startOf("week").$d;
     },
+
     dateNow() {
       return dayjs(new Date()).$d;
     },
   },
+  // watch: {
+  //   //监听选择时间的变化，只要变化了就发送请求获取图标数据
+  //   isSelectTime: {
+  //     handler(newVal) {
+  //       this.getWorkStatusCount(newVal);
+  //     },
+  //     immediate: true,
+  //     deep: true,
+  //   },
+  // },
   methods: {
+    getEchartData() {
+      // 指定图表的配置项和数据
+      // 引入echarts
+      const echarts = require("echarts");
+      // 抓取到要放置的盒子，确定好放置方位
+      const chart = this.$refs.chartWorkStatus;
+      // 初始化一个画布，将盒子作为形参放入
+      const myChart = echarts.init(chart);
+      // 获取数据
+      // const option = this.option;
+      //将数据传入到画布中
+      myChart.setOption(this.option);
+    },
+
     seclect(i) {
       this.liActiveClass = i;
       if (i == 1) {
-        this.value1 = [this.weekCurrent, new Date()];
+        this.isSelectTime = [this.weekCurrent, new Date()];
+
+        this.getWorkStatusCount([
+          dayjs(new Date()).startOf("week").format("YYYY-MM-DD"),
+          dayjs().format("YYYY-MM-DD"),
+        ]);
       } else if (i == 2) {
-        this.value1 = [this.monthCurrent, new Date()];
+        this.isSelectTime = [this.monthCurrent, new Date()];
+        this.getWorkStatusCount([
+          dayjs(new Date()).startOf("month").format("YYYY-MM-DD"),
+          dayjs().format("YYYY-MM-DD"),
+        ]);
       } else {
-        this.value1 = [this.yearCurrent, new Date()];
+        this.isSelectTime = [this.yearCurrent, new Date()];
+        this.getWorkStatusCount([
+          dayjs(new Date()).startOf("year").format("YYYY-MM-DD"),
+          dayjs(new Date()).startOf("date").format("YYYY-MM-DD"),
+        ]);
       }
     },
     seclectT(i) {
@@ -253,6 +372,27 @@ export default {
       this.regionList = RegionList.data.currentPageRecords;
       this.regionList.push({ name: "全部" });
     },
+    async getWorkStatusCount(timeInFo) {
+      console.log(timeInFo);
+      const { data } = await getWorkStatusCountAPI(timeInFo[0], timeInFo[1]);
+      console.log(data);
+      this.dataList = data;
+      data.forEach((item) => {
+        this.workStatusList.push({
+          collectDate: item.collectDate,
+          cancelCount: item.cancelCount,
+          finishCount: item.finishCount,
+        });
+      });
+      this.option.dataset.source = this.workStatusList;
+      this.getEchartData();
+      // console.log(this.workStatusList);
+      // const arr = data.forEach((item) => item.collectDate.replace("-", "周"));
+      // console.log(arr);
+    },
+    change(time) {
+      this.getWorkStatusCount(time);
+    },
   },
 };
 </script>
@@ -265,11 +405,25 @@ export default {
 .grid-content {
   margin-right: 10px;
   margin-top: 0 !important;
+  position: relative;
   .title-container {
     display: flex;
   }
+  .chart-workStatus {
+    position: absolute;
+    left: 17px;
+    top: 130px;
+    width: 96%;
+    height: 468px;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    padding: 0px;
+    padding-bottom: 30px;
+    margin: 0px;
+    // background-color: red;
+    border-width: 0px;
+  }
 }
-
 // 设置下拉框的字体属性及背景颜色；
 // .el-select-dropdown__item {
 //   font-size: 7px;
