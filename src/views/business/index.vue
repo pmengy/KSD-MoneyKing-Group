@@ -42,6 +42,7 @@
         <!-- top按钮 -->
         <div class="list-top-btn">
           <dkd-button
+            @click="Newtableckness"
             background="linear-gradient(135deg,hsl(27deg 100% 63%),hsl(17deg 100% 56%))!important"
           >
             <span>
@@ -56,11 +57,13 @@
             style="margin-left: 8px"
             background="#fbf4f0"
             color="#655b56"
+            @click="DkBbut"
             >工单配置</dkd-button
           >
         </div>
         <!-- 表格 -->
         <dkd-table
+          @details="details"
           :currentList="currentList"
           :tableLabel="tableLabel"
           :currentIndex="pageIndex * 10"
@@ -88,23 +91,68 @@
         </div>
       </el-card>
     </div>
+    <!-- 状态弹窗 -->
+    <State
+      ref="State"
+      :Visible.sync="StateVisible"
+      @gameclock="gameclock"
+      @onClose="onCloseState"
+    ></State>
+    <!-- 新增弹窗 -->
+    <Newtable
+      ref="Newtable"
+      :Visible.sync="NewtableVisible"
+      @onClose="NewtableVisible = false"
+    ></Newtable>
+    <!-- 配置弹窗 -->
+    <el-dialog title="工单配置" :visible.sync="dialogFormVisible">
+      <el-form :model="configurationFrom" :rules="staffInfoRules">
+        <el-form-item
+          label="补货警戒线"
+          label-width="150px"
+          class="formm"
+          prop="alertValue"
+        >
+          <el-input
+            size="large"
+            type="text"
+            placeholder="请输入内容"
+            v-model="configurationFrom.alertValue"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="FormVisible">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { searchTasks, getTaskStatus } from "@/api/task";
+import { searchTasks, getTaskStatus, getthresholdworkApi } from "@/api/index";
 import DkdButton from "@/components/DkdButton";
 import DkdTable from "./components/Theform.vue";
 import State from "./components/state.vue";
 import Newtable from "./components/Newtable.vue";
 
 export default {
+  name: "BBusin",
   data() {
     return {
+      // 搜索表单数据
       formInline: {
         taskCode: "",
         status: "",
       },
+      // 配置表数据
+      configurationFrom: {
+        alertValue: "10",
+      },
+      StateVisible: false, // 控制状态弹窗
+      NewtableVisible: false, //控制新建表单
+      dialogFormVisible: false, //控制配置弹窗
       currentList: [],
       taskStatusList: [],
       pageIndex: "",
@@ -123,9 +171,13 @@ export default {
         { label: "运营人员", width: "136", prop: "userName" },
         { label: "创建日期", width: "160", prop: "createTime" },
       ],
+      staffInfoRules: {
+        //整个表单的校验规则
+        alertValue: [{ required: true, message: "请输入", trigger: "blur" }],
+      },
     };
   },
-  components: { DkdButton, DkdTable },
+  components: { DkdButton, DkdTable, Newtable, State },
   created() {
     this.searchTasks();
     this.getTaskStatus();
@@ -165,6 +217,39 @@ export default {
     async search() {
       await this.searchTasks(this.formInline);
     },
+    // 新建弹窗展示
+    Newtableckness() {
+      this.NewtableVisible = true;
+    },
+    // 配置显示
+    DkBbut() {
+      this.dialogFormVisible = true;
+    },
+    // 设置阈值
+    async FormVisible() {
+      await getthresholdworkApi(this.configurationFrom);
+      this.$notify({
+        title: "成功",
+        message: "修改阈值成功",
+        type: "success",
+      });
+      this.dialogFormVisible = false;
+    },
+    // 显示详情
+    details(val) {
+      this.StateVisible = true;
+      // console.log(val);
+      this.$refs.State.StatedetaList(val);
+    },
+    // 关闭详情
+    onCloseState() {
+      this.StateVisible = false;
+    },
+    // 修改详情中表单
+    gameclock(val) {
+      this.NewtableVisible = true;
+      this.$refs.Newtable.GetstateInfo(val);
+    },
   },
 };
 </script>
@@ -201,5 +286,8 @@ export default {
   align-items: center;
   width: 80px;
   height: 36px;
+}
+.formm {
+  width: 600px !important;
 }
 </style>
