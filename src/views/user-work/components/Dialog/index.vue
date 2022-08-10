@@ -27,6 +27,7 @@
         :data="staffTaskList"
         border
         style="width: 100%"
+        :cell-style="{ height: '42px' }"
         center
         :header-cell-style="{
           background: '#f3f6fb',
@@ -62,29 +63,12 @@
 </template>
 
 <script>
-import time from "./getTimeFormat";
+import time from "./getTimeFormat.js";
 import { getTaskCountAPI } from "@/api/user";
 export default {
   name: "userTaskDialog",
   data() {
     return {
-      //   gridData: [
-      //     {
-      //       date: "2016-05-02",
-      //       name: "本周",
-      //       address: " 1518 弄",
-      //     },
-      //     {
-      //       date: "2016-05-04",
-      //       name: "本月",
-      //       address: "518 弄",
-      //     },
-      //     {
-      //       date: "2016-05-01",
-      //       name: "本年",
-      //       address: " 弄",
-      //     },
-      //   ],
       staffTaskList: [],
     };
   },
@@ -102,10 +86,13 @@ export default {
   created() {},
   watch: {
     // 监视弹出层是否关闭，如果打开就发ing求获取数据
-    Visible(newVal) {
-      if (newVal) {
-        this.getTaskCount();
-      }
+    Visible: {
+      handler(newVal) {
+        if (newVal) {
+          this.getTaskCount();
+        }
+      },
+      immediate: true,
     },
   },
   computed: {
@@ -168,7 +155,7 @@ export default {
     flex-direction: column;
     .taskLis {
       margin-top: 30px;
-      width: 580px;
+      width: 90%;
       border-radius: 10px;
       .el-table--scrollable-x .el-table__body-wrapper {
         overflow-x: clip !important;
@@ -180,15 +167,18 @@ export default {
   }
 }
 .staffInfo {
-  width: 579px;
+  width: 90%;
   height: 86px;
   padding: 19px 19px 0;
   background: #f3f6fb;
   padding: 10px;
   padding-right: 50px;
+  white-space: nowrap;
+  overflow: hidden;
   .up {
     display: flex;
     justify-content: space-between;
+    // width: 100%;
   }
 }
 </style>

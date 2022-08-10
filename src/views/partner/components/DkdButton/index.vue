@@ -40,7 +40,6 @@ export default {
   font-size: 14px;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
   &:disabled {
     cursor: not-allowed;
     background-color: #edf0f9 !important;

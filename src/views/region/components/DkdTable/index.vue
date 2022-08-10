@@ -30,7 +30,7 @@
     <!-- 操作 -->
     <el-table-column label="操作" width="200">
       <template slot-scope="scope">
-        <el-button type="text" @click="getInfo(scope.row)">查看详情</el-button>
+        <el-button type="text" @click="getInfo(scope.row)" class='operation' >查看详情</el-button>
         <!-- 弹出框 -->
         <el-dialog
           title="区域详情"
@@ -63,7 +63,7 @@
             </el-table>
           </div>
         </el-dialog>
-        <el-button type="text" @click="change(scope.row.id)">修改</el-button>
+        <el-button type="text" @click="change(scope.row.id)" class='operation' >修改</el-button>
         <!-- 弹出框 -->
         <el-dialog
           ref="addbox"
@@ -81,7 +81,7 @@
                   maxlength="15"
                 />
               </el-form-item>
-              <el-form-item label="城北街道">
+              <el-form-item label="备注说明">
                 <el-input
                   v-model="changeList.remark"
                   type="textarea"
@@ -98,7 +98,7 @@
           </div>
         </el-dialog>
         <el-button type="text" style="color: red" @click="del(scope.row.id)"
-          >删除</el-button
+           class='operation' >删除</el-button
         >
       </template>
     </el-table-column>
@@ -248,5 +248,8 @@ export default {
       border: none;
     }
   }
+}
+.operation{
+  margin: 0 5px;
 }
 </style>

@@ -23,6 +23,8 @@
           :totalCount="totalCount"
           :pageIndex="pageIndex"
           :totalPage="totalPage"
+          @lastPage="lastPage"
+          @nextPage="nextPage"
         />
       </main>
       <Dialog
@@ -98,6 +100,16 @@ export default {
       const { data } = await getUserInfo(info.userId);
       this.staffTaskInfo = data;
       this.visible = true;
+    },
+    // 上一页
+    lastPage() {
+      this.queryInfo.pageIndex--;
+      this.getStaffTaskList();
+    },
+    // 下一页
+    nextPage() {
+      this.queryInfo.pageIndex++;
+      this.getStaffTaskList();
     },
     // 关闭弹层
     onClose() {

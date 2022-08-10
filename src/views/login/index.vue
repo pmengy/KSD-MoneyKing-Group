@@ -61,6 +61,7 @@
             name="code"
             tabindex="3"
             auto-complete="on"
+            @change="login"
           />
           <div class="code_right" @click="changeImageCode">
             <img src="" alt="" ref="img" />

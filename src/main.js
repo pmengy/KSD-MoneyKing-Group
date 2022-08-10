@@ -16,15 +16,13 @@ import "@/icons";
 import "@/permission";
 import * as directives from "@/directives";
 import echarts from "echarts";
-
 Vue.prototype.$echarts = echarts;
-
 if (process.env.NODE_ENV === "production") {
   const { mockXHR } = require("../mock");
   mockXHR();
 }
 
-Vue.use(ElementUI, { locale });
+Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 
